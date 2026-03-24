@@ -39,7 +39,7 @@
         const SB_URL = 'https://sfwlfdxwqnrvypaifayi.supabase.co';
         const SB_KEY = 'sb_publishable_6ERrvoGOhpYD7P4TcYxmUA_gGHslTlR'; 
 
-        const supabase = supabase.createClient(SB_URL, SB_KEY);
+        supabase = supabase.createClient(SB_URL, SB_KEY);
         let tg = window.Telegram.WebApp;
         tg.expand();
 
