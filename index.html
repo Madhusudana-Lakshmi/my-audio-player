@@ -44,8 +44,9 @@
         /* ПЛЕЕР */
         #player-container { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background: #000; padding: 20px 0 40px; display: none; 
+            background: rgba(0, 0, 0, 0.95); padding: 20px 0 40px; display: none; 
             flex-direction: column; border-top: 1px solid #333; z-index: 1000;
+            border-radius: 20px 20px 0 0;
         }
         .controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; }
         .btn-play { width: 80px; height: 80px; border-radius: 50%; background: var(--tg-theme-button-color); border: none; font-size: 35px; color: #fff; }
@@ -53,16 +54,21 @@
         #progress-bar { width: 90%; margin: 10px auto; height: 10px; }
         .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; }
         
-        #admin-panel { display: none; padding: 10px; background: rgba(0,0,0,0.5); gap: 10px; justify-content: center; }
-        .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px; border-radius: 8px; }
+        #admin-panel { display: none; padding: 10px; background: rgba(0,0,0,0.5); flex-direction: column; align-items: center; gap: 10px; }
+        .admin-buttons { display: flex; gap: 10px; }
+        .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;}
+        #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; text-align: center; }
         .error-box { grid-column: span 2; padding: 20px; background: rgba(255,0,0,0.2); border-radius: 10px; text-align: center; color: #ffbcbc; }
     </style>
 </head>
 <body>
 
     <div id="admin-panel">
-        <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
-        <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
+        <div class="admin-buttons">
+            <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
+            <button class="admin-btn" id="upload-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
+        </div>
+        <div id="upload-status"></div>
         <input type="file" id="file-input" multiple style="display:none">
     </div>
 
@@ -74,11 +80,11 @@
         <div id="now-playing" style="text-align: center; margin-bottom: 10px; padding: 0 10px;"></div>
         <input type="range" id="progress-bar" value="0">
         <div class="controls">
-            <button onclick="skip(-15)" style="background:none; border:none; color:#fff; font-size:30px;">⏪</button>
+            <button onclick="skip(-15)" style="background:none; border:none; color:#fff; font-size:30px; cursor: pointer;">⏪</button>
             <button id="play-pause" class="btn-play" onclick="togglePlay()">▶</button>
-            <button onclick="skip(15)" style="background:none; border:none; color:#fff; font-size:30px;">⏩</button>
+            <button onclick="skip(15)" style="background:none; border:none; color:#fff; font-size:30px; cursor: pointer;">⏩</button>
         </div>
-        <button onclick="stopPlayer()" style="margin-top:20px; background:none; border:none; color:#555;">Закрыть</button>
+        <button onclick="stopPlayer()" style="margin-top:20px; background:none; border:none; color:#aaa; font-size: 16px; cursor: pointer;">Закрыть плеер</button>
     </div>
 
     <audio id="main-audio"></audio>
@@ -87,7 +93,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ТВОИ ОБНОВЛЕННЫЕ ДАННЫЕ
         const SUPABASE_URL = 'https://sfwlfdxwqnrvypaifayi.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmd2xmZHh3cW5ydnlwYWlmYXlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjU3NzksImV4cCI6MjA4OTk0MTc3OX0.euqolkndodGmo0AJPaiCh60VU9nJjOZ11dz5boVTjnQ';
         const ROOT_ID = '2a23cff1-1d43-4ce9-a952-65b7d7d3f1d0';
@@ -103,6 +108,8 @@
             try {
                 currentFolderId = null;
                 document.getElementById('back-container').style.display = 'none';
+                document.getElementById('upload-btn').style.display = 'none'; // Скрываем кнопку файлов в корне
+
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${ROOT_ID}&select=*`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
@@ -116,22 +123,37 @@
                     render(data);
                 }
             } catch (err) {
-                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка доступа (${err.message}). Проверьте ключи или интернет.</div>`;
+                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка: ${err.message}. Проверьте соединение.</div>`;
             }
         }
 
         async function loadFiles(id) {
-            currentFolderId = id;
-            document.getElementById('back-container').style.display = 'block';
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}&select=*`, {
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-            render(await res.json());
+            try {
+                currentFolderId = id;
+                document.getElementById('back-container').style.display = 'block';
+                document.getElementById('upload-btn').style.display = 'block'; // Показываем кнопку загрузки внутри папки
+                
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}&select=*`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                render(await res.json());
+            } catch (err) {
+                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка загрузки файлов.</div>`;
+            }
         }
 
         function render(items) {
             const container = document.getElementById('content');
             container.innerHTML = '';
+            
+            // Сортируем: сначала папки, потом файлы
+            items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
+
+            if (items.length === 0 && currentFolderId !== null) {
+                container.innerHTML = "<div style='grid-column: span 2; text-align: center; color: #aaa; padding: 20px;'>Папка пуста. Загрузите файлы.</div>";
+                return;
+            }
+
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = `item type-${item.type}`;
@@ -160,16 +182,73 @@
         audio.ontimeupdate = () => { prog.max = audio.duration || 0; prog.value = audio.currentTime; };
         prog.oninput = () => { audio.currentTime = prog.value; };
 
+        // АДМИН-ФУНКЦИИ
         async function createNewFolder() {
-            const n = prompt("Имя папки:");
+            const n = prompt("Введите имя новой папки:");
             if (!n) return;
+            
+            // Если мы находимся в корне, создаем папку в корне. Если внутри папки - создаем подпапку.
+            const parent = currentFolderId ? currentFolderId : ROOT_ID;
+
             await fetch(`${SUPABASE_URL}/rest/v1/items`, {
                 method: 'POST',
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: n, type: 'folder', parent_id: ROOT_ID })
+                body: JSON.stringify({ name: n, type: 'folder', parent_id: parent })
             });
-            loadFolders();
+            
+            if (currentFolderId) loadFiles(currentFolderId);
+            else loadFolders();
         }
+
+        // ЗАГРУЗКА ФАЙЛОВ
+        document.getElementById('file-input').onchange = async (e) => {
+            const files = e.target.files;
+            if (!files.length || !currentFolderId) return;
+            
+            const statusDiv = document.getElementById('upload-status');
+            const uploadBtn = document.getElementById('upload-btn');
+            
+            uploadBtn.disabled = true;
+
+            try {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    statusDiv.innerText = `⏳ Загрузка файла ${i + 1} из ${files.length}...`;
+                    
+                    const path = `audio-files/${Date.now()}_${file.name}`;
+                    
+                    // 1. Загружаем файл в Storage
+                    const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, { 
+                        method: 'POST', 
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }, 
+                        body: file 
+                    });
+                    
+                    if (!uploadRes.ok) throw new Error('Ошибка сети при загрузке');
+
+                    // 2. Добавляем запись в базу данных
+                    await fetch(`${SUPABASE_URL}/rest/v1/items`, { 
+                        method: 'POST', 
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ 
+                            name: file.name, 
+                            type: 'file', 
+                            url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, 
+                            parent_id: currentFolderId 
+                        }) 
+                    });
+                }
+                statusDiv.innerText = "✅ Файлы успешно загружены!";
+                setTimeout(() => statusDiv.innerText = "", 3000); // Очищаем статус через 3 секунды
+                loadFiles(currentFolderId); // Обновляем список
+            } catch (error) {
+                statusDiv.innerText = "❌ Ошибка загрузки!";
+                alert("Произошла ошибка при загрузке: " + error.message);
+            } finally {
+                uploadBtn.disabled = false;
+                e.target.value = ''; // Сбрасываем input
+            }
+        };
 
         loadFolders();
     </script>
