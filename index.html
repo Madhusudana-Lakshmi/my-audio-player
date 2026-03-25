@@ -14,52 +14,74 @@
             --tg-theme-button-color: #2481cc;
             --tg-theme-button-text-color: #ffffff;
             --danger-color: #ff3b30;
+            --star-color: #ffcc00; /* Золотой цвет для звезд */
+            --check-color: #2ecc71; /* Зеленый цвет для галочек */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-bg-color);
             color: var(--tg-theme-text-color);
             margin: 0; padding: 0;
+            -webkit-user-select: none; /* Запрет выделения текста */
         }
 
-        .header { padding: 15px; background: var(--tg-theme-secondary-bg-color); text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        /* Заголовок с ЛОГОТИПОМ */
+        .header { 
+            padding: 15px; 
+            background: var(--tg-theme-secondary-bg-color); 
+            text-align: center; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .logo { font-size: 24px; margin-right: 10px; } /* Временный ЛОТОС */
         h2 { margin: 0; font-size: 17px; font-weight: 600; }
 
-        /* Сетка для папок */
         #content { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; /* ДВЕ КОЛОНКИ */
+            grid-template-columns: 1fr 1fr; 
             gap: 10px; 
             padding: 10px; 
             padding-bottom: 140px; 
         }
 
-        /* Общие стили для элементов */
         .item {
             background: var(--tg-theme-secondary-bg-color);
             border-radius: 12px;
             padding: 12px;
             display: flex;
-            flex-direction: column; /* Иконка сверху, текст снизу */
+            flex-direction: column;
             align-items: center;
             text-align: center;
             cursor: pointer;
             position: relative;
+            transition: transform 0.1s;
         }
+        .item:active { transform: scale(0.98); background: rgba(0,0,0,0.05); }
 
-        /* Стили специально для ФАЙЛОВ (чтобы они были во всю ширину) */
         .item.type-file {
-            grid-column: span 2; /* Растягиваем файл на обе колонки */
-            flex-direction: row; /* Иконка слева, текст справа */
+            grid-column: span 2;
+            flex-direction: row;
             text-align: left;
             padding: 10px 15px;
+            justify-content: flex-start;
         }
         .item.type-file .item-icon { margin-bottom: 0; margin-right: 15px; }
 
         .item-icon { font-size: 28px; margin-bottom: 8px; }
+        .item-info { flex-grow: 1; display: flex; flex-direction: column; }
         .item-name { font-weight: 500; font-size: 14px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
-        .back-btn { padding: 12px 15px; color: var(--tg-theme-button-color); font-weight: 500; cursor: pointer; }
+        /* ИКОНКИ ✅ Прослушано и ⭐ Избранное */
+        .file-status {
+            display: flex; align-items: center; gap: 8px; font-size: 16px; margin-left: 10px;
+        }
+        .check-mark { color: var(--check-color); display: none; } /* Скрыто по умолчанию */
+        .item.is-listened .check-mark { display: inline; } /* Показывать если прослушано */
+
+        .star-mark { color: var(--tg-theme-hint-color); cursor: pointer; transition: color 0.2s; }
+        .item.is-favorite .star-mark { color: var(--star-color); } /* Золотая если в избранном */
+
+        .back-btn { padding: 12px 15px; color: var(--tg-theme-button-color); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 5px;}
 
         /* Админка */
         #admin-panel { display: none; padding: 12px; background: #e8f4fd; border-bottom: 1px solid #cce5f7; }
@@ -84,15 +106,18 @@
         <div id="upload-progress" style="font-size: 11px; margin-top:5px; color: var(--tg-theme-button-color);"></div>
     </div>
 
-    <div class="header"><h2 id="folder-title">Лекторий</h2></div>
+    <div class="header">
+        <span class="logo">🪷</span> <h2 id="folder-title">Лекторий</h2>
+    </div>
+
     <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад</div>
 
     <div id="content">Загрузка...</div>
 
     <div id="player-container">
-        <div onclick="document.getElementById('audio-player').pause(); this.parentElement.style.display='none';" style="text-align:right; cursor:pointer; padding: 5px; font-size: 20px;">×</div>
-        <div id="now-playing" style="font-size:13px; font-weight:600; text-align:center; margin-bottom: 5px;"></div>
-        <audio id="audio-player" controls></audio>
+        <div onclick="stopPlayer()" style="text-align:right; cursor:pointer; padding: 5px; font-size: 20px; color: var(--tg-theme-hint-color);">×</div>
+        <div id="now-playing" style="font-size:13px; font-weight:600; text-align:center; margin-bottom: 5px; max-height: 32px; overflow:hidden;"></div>
+        <audio id="audio-player" controls controlsList="nodownload"></audio>
     </div>
 
     <script>
@@ -103,10 +128,17 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmd2xmZHh3cW5ydnlwYWlmYXlpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDM2NTc3OSwiZXhwIjoyMDg5OTQxNzc5fQ.mBQPFZ7t_q_GsJrBVc1L1UlvKapmPBLGHXhLKdnUr3k';
         const ROOT_ID = '2a23cff1-1d43-4ce9-a952-65b7d7d3f1d0';
         
-        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+        const SECRET_WORD = 'admin'; 
+        const isAdmin = new URLSearchParams(window.location.search).get(SECRET_WORD) === 'true';
+        
         if (isAdmin) document.getElementById('admin-panel').style.display = 'block';
 
         let currentFolderId = null;
+        let currentPlayingFileId = null; // Запоминаем ID того, что сейчас играет
+
+        // ЗАГРУЗКА ИЗБРАННОГО И ПРОСЛУШАННОГО
+        const getFavorites = () => JSON.parse(localStorage.getItem('favs') || '[]');
+        const getListened = () => JSON.parse(localStorage.getItem('listened') || '[]');
 
         async function loadFolders() {
             currentFolderId = null;
@@ -118,7 +150,7 @@
 
         async function loadFiles(id, name) {
             currentFolderId = id;
-            document.getElementById('back-container').style.display = 'block';
+            document.getElementById('back-container').style.display = 'flex';
             document.getElementById('folder-title').innerText = name;
             const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
             renderItems(await res.json());
@@ -129,39 +161,88 @@
             container.innerHTML = '';
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
             
+            const favs = getFavorites();
+            const listened = getListened();
+
             items.forEach(item => {
+                const isFav = favs.includes(item.id);
+                const isList = listened.includes(item.id);
+                
                 const div = document.createElement('div');
-                div.className = `item type-${item.type}`; // Добавляем класс типа (folder или file)
+                div.className = `item type-${item.type} ${isFav ? 'is-favorite' : ''} ${isList ? 'is-listened' : ''}`;
+                div.id = `item-${item.id}`; // Добавляем ID элементу
+                
                 div.innerHTML = `
                     ${isAdmin ? `<div class="delete-btn" onclick="event.stopPropagation(); deleteItem('${item.id}', '${item.type}')">🗑</div>` : ''}
                     <div class="item-icon">${item.type === 'folder' ? '📁' : '🎧'}</div>
-                    <div class="item-name">${item.name}</div>
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                    </div>
+                    ${item.type === 'file' ? `
+                        <div class="file-status">
+                            <span class="check-mark">✅</span>
+                            <span class="star-mark" onclick="event.stopPropagation(); toggleFavorite('${item.id}')">⭐</span>
+                        </div>
+                    ` : ''}
                 `;
                 div.onclick = () => {
                     if (item.type === 'folder') loadFiles(item.id, item.name);
-                    else playAudio(item.url, item.name);
+                    else playAudio(item.url, item.name, item.id);
                 };
                 container.appendChild(div);
             });
         }
 
-        function playAudio(url, name) {
-            const p = document.getElementById('audio-player');
+        // --- ЛОГИКА ПЛЕЕРА И СТАТУСОВ ---
+
+        const player = document.getElementById('audio-player');
+        
+        function playAudio(url, name, id) {
+            currentPlayingFileId = id; // Запоминаем, что играем
             document.getElementById('now-playing').innerText = name;
-            p.src = url;
+            player.src = url;
             document.getElementById('player-container').style.display = 'flex';
-            p.play();
+            player.play();
         }
 
-        // АДМИН-ФУНКЦИИ
+        function stopPlayer() {
+            player.pause();
+            document.getElementById('player-container').style.display = 'none';
+        }
+
+        // Плеер ЗАКОНЧИЛ играть -> ставим ГАЛОЧКУ ✅
+        player.onended = () => {
+            if (!currentPlayingFileId) return;
+            const listened = getListened();
+            if (!listened.includes(currentPlayingFileId)) {
+                listened.push(currentPlayingFileId);
+                localStorage.setItem('listened', JSON.stringify(listened));
+                // Обновляем визуально прямо сейчас
+                document.getElementById(`item-${currentPlayingFileId}`)?.classList.add('is-listened');
+            }
+        };
+
+        // Переключение ИЗБРАННОГО ⭐
+        function toggleFavorite(id) {
+            const favs = getFavorites();
+            const index = favs.indexOf(id);
+            const itemDiv = document.getElementById(`item-${id}`);
+
+            if (index === -1) {
+                favs.push(id);
+                itemDiv?.classList.add('is-favorite');
+            } else {
+                favs.splice(index, 1);
+                itemDiv?.classList.remove('is-favorite');
+            }
+            localStorage.setItem('favs', JSON.stringify(favs));
+        }
+
+        // АДМИН-ФУНКЦИИ (оставляем как были)
         async function createNewFolder() {
             const name = prompt("Название папки:");
             if (!name) return;
-            await fetch(`${SUPABASE_URL}/rest/v1/items`, {
-                method: 'POST',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, type: 'folder', parent_id: ROOT_ID })
-            });
+            await fetch(`${SUPABASE_URL}/rest/v1/items`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, type: 'folder', parent_id: ROOT_ID }) });
             loadFolders();
         }
 
