@@ -20,34 +20,51 @@
             background-color: var(--tg-theme-bg-color);
             color: var(--tg-theme-text-color);
             margin: 0; padding: 0;
-            display: flex; flex-direction: column;
         }
 
-        .header { padding: 20px 15px; background: var(--tg-theme-secondary-bg-color); text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        h2 { margin: 0; font-size: 18px; font-weight: 600; }
+        .header { padding: 15px; background: var(--tg-theme-secondary-bg-color); text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        h2 { margin: 0; font-size: 17px; font-weight: 600; }
 
-        #content { padding: 10px; padding-bottom: 140px; }
-        
+        /* Сетка для папок */
+        #content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; /* ДВЕ КОЛОНКИ */
+            gap: 10px; 
+            padding: 10px; 
+            padding-bottom: 140px; 
+        }
+
+        /* Общие стили для элементов */
         .item {
-            display: flex; align-items: center; padding: 12px 15px; margin-bottom: 8px;
-            background: var(--tg-theme-secondary-bg-color); border-radius: 12px; cursor: pointer;
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column; /* Иконка сверху, текст снизу */
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
         }
-        .item-icon { font-size: 22px; margin-right: 15px; }
-        .item-info { display: flex; flex-direction: column; flex-grow: 1; }
-        .item-name { font-weight: 500; font-size: 15px; }
 
-        .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: 500; cursor: pointer; }
+        /* Стили специально для ФАЙЛОВ (чтобы они были во всю ширину) */
+        .item.type-file {
+            grid-column: span 2; /* Растягиваем файл на обе колонки */
+            flex-direction: row; /* Иконка слева, текст справа */
+            text-align: left;
+            padding: 10px 15px;
+        }
+        .item.type-file .item-icon { margin-bottom: 0; margin-right: 15px; }
+
+        .item-icon { font-size: 28px; margin-bottom: 8px; }
+        .item-name { font-weight: 500; font-size: 14px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+        .back-btn { padding: 12px 15px; color: var(--tg-theme-button-color); font-weight: 500; cursor: pointer; }
 
         /* Админка */
-        #admin-panel { display: none; padding: 15px; background: #e8f4fd; border-bottom: 1px solid #cce5f7; }
-        .admin-btn { 
-            background: var(--tg-theme-button-color); color: white; border: none; 
-            padding: 8px 12px; border-radius: 8px; margin-right: 5px; cursor: pointer; font-size: 13px;
-        }
-        .delete-btn { color: var(--danger-color); font-size: 18px; padding: 5px 10px; cursor: pointer; }
-        
-        /* Прогресс загрузки */
-        #upload-progress { display: none; font-size: 12px; color: var(--tg-theme-button-color); margin-top: 5px; }
+        #admin-panel { display: none; padding: 12px; background: #e8f4fd; border-bottom: 1px solid #cce5f7; }
+        .admin-btn { background: var(--tg-theme-button-color); color: white; border: none; padding: 8px 12px; border-radius: 8px; margin-right: 5px; cursor: pointer; font-size: 12px; }
+        .delete-btn { position: absolute; top: 5px; right: 5px; color: var(--danger-color); background: rgba(255,255,255,0.7); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 5; }
 
         /* Плеер */
         #player-container {
@@ -61,11 +78,10 @@
 <body>
 
     <div id="admin-panel">
-        <div style="font-weight: bold; margin-bottom: 10px; font-size: 12px; color: #555;">🛠 ПАНЕЛЬ АДМИНИСТРАТОРА</div>
-        <button class="admin-btn" onclick="createNewFolder()">+ Новая папка</button>
-        <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Загрузить файлы</button>
+        <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
+        <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
         <input type="file" id="file-input" accept="audio/*" multiple style="display:none">
-        <div id="upload-progress"></div>
+        <div id="upload-progress" style="font-size: 11px; margin-top:5px; color: var(--tg-theme-button-color);"></div>
     </div>
 
     <div class="header"><h2 id="folder-title">Лекторий</h2></div>
@@ -74,8 +90,8 @@
     <div id="content">Загрузка...</div>
 
     <div id="player-container">
-        <div onclick="document.getElementById('audio-player').pause(); this.parentElement.style.display='none';" style="text-align:right; cursor:pointer;">×</div>
-        <div id="now-playing" style="font-size:14px; font-weight:600; text-align:center;"></div>
+        <div onclick="document.getElementById('audio-player').pause(); this.parentElement.style.display='none';" style="text-align:right; cursor:pointer; padding: 5px; font-size: 20px;">×</div>
+        <div id="now-playing" style="font-size:13px; font-weight:600; text-align:center; margin-bottom: 5px;"></div>
         <audio id="audio-player" controls></audio>
     </div>
 
@@ -87,8 +103,7 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmd2xmZHh3cW5ydnlwYWlmYXlpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDM2NTc3OSwiZXhwIjoyMDg5OTQxNzc5fQ.mBQPFZ7t_q_GsJrBVc1L1UlvKapmPBLGHXhLKdnUr3k';
         const ROOT_ID = '2a23cff1-1d43-4ce9-a952-65b7d7d3f1d0';
         
-        const urlParams = new URLSearchParams(window.location.search);
-        const isAdmin = urlParams.get('admin') === 'true';
+        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
         if (isAdmin) document.getElementById('admin-panel').style.display = 'block';
 
         let currentFolderId = null;
@@ -116,21 +131,18 @@
             
             items.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'item';
+                div.className = `item type-${item.type}`; // Добавляем класс типа (folder или file)
                 div.innerHTML = `
+                    ${isAdmin ? `<div class="delete-btn" onclick="event.stopPropagation(); deleteItem('${item.id}', '${item.type}')">🗑</div>` : ''}
                     <div class="item-icon">${item.type === 'folder' ? '📁' : '🎧'}</div>
-                    <div class="item-info" onclick="itemClick('${item.id}', '${item.name}', '${item.type}', '${item.url}')">
-                        <span class="item-name">${item.name}</span>
-                    </div>
-                    ${isAdmin ? `<div class="delete-btn" onclick="deleteItem('${item.id}', '${item.type}')">🗑</div>` : ''}
+                    <div class="item-name">${item.name}</div>
                 `;
+                div.onclick = () => {
+                    if (item.type === 'folder') loadFiles(item.id, item.name);
+                    else playAudio(item.url, item.name);
+                };
                 container.appendChild(div);
             });
-        }
-
-        function itemClick(id, name, type, url) {
-            if (type === 'folder') loadFiles(id, name);
-            else playAudio(url, name);
         }
 
         function playAudio(url, name) {
@@ -141,10 +153,9 @@
             p.play();
         }
 
-        // --- ФУНКЦИИ АДМИНИСТРАТОРА ---
-
+        // АДМИН-ФУНКЦИИ
         async function createNewFolder() {
-            const name = prompt("Введите название папки:");
+            const name = prompt("Название папки:");
             if (!name) return;
             await fetch(`${SUPABASE_URL}/rest/v1/items`, {
                 method: 'POST',
@@ -155,40 +166,23 @@
         }
 
         async function deleteItem(id, type) {
-            if (!confirm(`Удалить эту ${type === 'folder' ? 'папку и всё её содержимое' : 'лекцию'}?`)) return;
-            if (type === 'folder') {
-                await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-            }
+            if (!confirm("Удалить?")) return;
+            if (type === 'folder') await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
             await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
             currentFolderId ? loadFiles(currentFolderId, document.getElementById('folder-title').innerText) : loadFolders();
         }
 
         document.getElementById('file-input').onchange = async (e) => {
             const files = e.target.files;
-            if (!files.length || !currentFolderId) { alert("Выберите папку!"); return; }
-
+            if (!files.length || !currentFolderId) return;
             const progress = document.getElementById('upload-progress');
-            progress.style.display = 'block';
-
             for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                progress.innerText = `⏳ Загрузка ${i+1} из ${files.length}: ${file.name}`;
-                
-                const path = `audio-files/${Date.now()}_${file.name}`;
-                await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, {
-                    method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': file.type },
-                    body: file
-                });
-
-                await fetch(`${SUPABASE_URL}/rest/v1/items`, {
-                    method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: file.name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId })
-                });
+                progress.innerText = `⏳ ${i+1}/${files.length}: ${files[i].name}`;
+                const path = `audio-files/${Date.now()}_${files[i].name}`;
+                await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': files[i].type }, body: files[i] });
+                await fetch(`${SUPABASE_URL}/rest/v1/items`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: files[i].name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId }) });
             }
-
-            progress.innerText = "✅ Все файлы загружены!";
+            progress.innerText = "✅ Готово!";
             loadFiles(currentFolderId, document.getElementById('folder-title').innerText);
         };
 
