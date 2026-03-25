@@ -41,7 +41,13 @@
         .item-icon { font-size: 28px; margin-bottom: 5px; }
         .item.type-file .item-icon { margin: 0 15px 0 0; }
 
-        /* ПЛЕЕР */
+        /* Кнопка удаления */
+        .del-btn {
+            position: absolute; top: 5px; right: 10px; 
+            color: #ff4d4d; font-size: 24px; font-weight: bold; 
+            padding: 5px; cursor: pointer; z-index: 10;
+        }
+
         #player-container { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: rgba(0, 0, 0, 0.95); padding: 20px 0 40px; display: none; 
@@ -108,59 +114,57 @@
             try {
                 currentFolderId = null;
                 document.getElementById('back-container').style.display = 'none';
-                document.getElementById('upload-btn').style.display = 'none'; // Скрываем кнопку файлов в корне
-
+                document.getElementById('upload-btn').style.display = 'none';
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${ROOT_ID}&select=*`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
-                
                 if (!res.ok) throw new Error(res.status);
-                const data = await res.json();
-                
-                if (data.length === 0) {
-                    document.getElementById('content').innerHTML = "<div class='error-box'>База пуста. Добавьте папку через админку.</div>";
-                } else {
-                    render(data);
-                }
+                render(await res.json());
             } catch (err) {
-                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка: ${err.message}. Проверьте соединение.</div>`;
+                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка загрузки.</div>`;
             }
         }
 
         async function loadFiles(id) {
-            try {
-                currentFolderId = id;
-                document.getElementById('back-container').style.display = 'block';
-                document.getElementById('upload-btn').style.display = 'block'; // Показываем кнопку загрузки внутри папки
-                
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}&select=*`, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-                });
-                render(await res.json());
-            } catch (err) {
-                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка загрузки файлов.</div>`;
-            }
+            currentFolderId = id;
+            document.getElementById('back-container').style.display = 'block';
+            document.getElementById('upload-btn').style.display = 'block';
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}&select=*`, {
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            });
+            render(await res.json());
         }
 
         function render(items) {
             const container = document.getElementById('content');
             container.innerHTML = '';
-            
-            // Сортируем: сначала папки, потом файлы
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
-
-            if (items.length === 0 && currentFolderId !== null) {
-                container.innerHTML = "<div style='grid-column: span 2; text-align: center; color: #aaa; padding: 20px;'>Папка пуста. Загрузите файлы.</div>";
-                return;
-            }
 
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = `item type-${item.type}`;
                 div.innerHTML = `<div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div><div class="item-name">${item.name}</div>`;
+                
+                if (isAdmin) {
+                    const del = document.createElement('div');
+                    del.className = 'del-btn';
+                    del.innerHTML = '×';
+                    del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
+                    div.appendChild(del);
+                }
+
                 div.onclick = () => item.type === 'folder' ? loadFiles(item.id) : play(item.url, item.name);
                 container.appendChild(div);
             });
+        }
+
+        async function deleteItem(id, name) {
+            if (!confirm(`Удалить "${name}"?`)) return;
+            await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${id}`, {
+                method: 'DELETE',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            });
+            if (currentFolderId) loadFiles(currentFolderId); else loadFolders();
         }
 
         function play(url, name) {
@@ -182,72 +186,39 @@
         audio.ontimeupdate = () => { prog.max = audio.duration || 0; prog.value = audio.currentTime; };
         prog.oninput = () => { audio.currentTime = prog.value; };
 
-        // АДМИН-ФУНКЦИИ
         async function createNewFolder() {
-            const n = prompt("Введите имя новой папки:");
+            const n = prompt("Имя папки:");
             if (!n) return;
-            
-            // Если мы находимся в корне, создаем папку в корне. Если внутри папки - создаем подпапку.
             const parent = currentFolderId ? currentFolderId : ROOT_ID;
-
             await fetch(`${SUPABASE_URL}/rest/v1/items`, {
                 method: 'POST',
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: n, type: 'folder', parent_id: parent })
             });
-            
-            if (currentFolderId) loadFiles(currentFolderId);
-            else loadFolders();
+            if (currentFolderId) loadFiles(currentFolderId); else loadFolders();
         }
 
-        // ЗАГРУЗКА ФАЙЛОВ
         document.getElementById('file-input').onchange = async (e) => {
             const files = e.target.files;
             if (!files.length || !currentFolderId) return;
-            
-            const statusDiv = document.getElementById('upload-status');
-            const uploadBtn = document.getElementById('upload-btn');
-            
-            uploadBtn.disabled = true;
-
-            try {
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    statusDiv.innerText = `⏳ Загрузка файла ${i + 1} из ${files.length}...`;
-                    
-                    const path = `audio-files/${Date.now()}_${file.name}`;
-                    
-                    // 1. Загружаем файл в Storage
-                    const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, { 
-                        method: 'POST', 
-                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }, 
-                        body: file 
-                    });
-                    
-                    if (!uploadRes.ok) throw new Error('Ошибка сети при загрузке');
-
-                    // 2. Добавляем запись в базу данных
-                    await fetch(`${SUPABASE_URL}/rest/v1/items`, { 
-                        method: 'POST', 
-                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ 
-                            name: file.name, 
-                            type: 'file', 
-                            url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, 
-                            parent_id: currentFolderId 
-                        }) 
-                    });
-                }
-                statusDiv.innerText = "✅ Файлы успешно загружены!";
-                setTimeout(() => statusDiv.innerText = "", 3000); // Очищаем статус через 3 секунды
-                loadFiles(currentFolderId); // Обновляем список
-            } catch (error) {
-                statusDiv.innerText = "❌ Ошибка загрузки!";
-                alert("Произошла ошибка при загрузке: " + error.message);
-            } finally {
-                uploadBtn.disabled = false;
-                e.target.value = ''; // Сбрасываем input
+            const status = document.getElementById('upload-status');
+            for (let i = 0; i < files.length; i++) {
+                status.innerText = `⏳ Загрузка ${i+1}/${files.length}`;
+                const file = files[i];
+                const path = `audio-files/${Date.now()}_${file.name}`;
+                await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, { 
+                    method: 'POST', 
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }, 
+                    body: file 
+                });
+                await fetch(`${SUPABASE_URL}/rest/v1/items`, { 
+                    method: 'POST', 
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ name: file.name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId }) 
+                });
             }
+            status.innerText = "";
+            loadFiles(currentFolderId);
         };
 
         loadFolders();
