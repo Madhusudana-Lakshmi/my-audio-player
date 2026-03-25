@@ -7,52 +7,79 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-secondary-bg-color: #f5f5f5;
-            --tg-theme-text-color: #000000;
-            --tg-theme-button-color: #2481cc;
-            --check-color: #2ecc71;
+            /* Ссылка на фоновое изображение (Лотос) */
+            --bg-image: url('http://googleusercontent.com/image_collection/image_retrieval/7191242288474391484_0');
+            --tg-theme-button-color: #3897f0;
+            --overlay-color: rgba(0, 0, 0, 0.65);
         }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-        .header { padding: 15px; background: var(--tg-theme-secondary-bg-color); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ddd; }
-        .logo { font-size: 26px; margin-right: 10px; }
-        h2 { margin: 0; font-size: 18px; }
-
-        #content { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 220px; }
         
-        .item { background: var(--tg-theme-secondary-bg-color); border-radius: 16px; padding: 25px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            color: #fff; margin: 0; padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+            min-height: 100vh; position: relative;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--bg-image); background-size: cover;
+            background-position: center; z-index: -2;
+        }
+
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--overlay-color); z-index: -1;
+        }
+
+        .header { 
+            padding: 15px; background: rgba(0,0,0,0.3); 
+            display: flex; align-items: center; justify-content: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+        }
+        h2 { margin: 0; font-size: 18px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+        #content { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 240px; }
+        
+        .item { 
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
+            border-radius: 16px; padding: 25px 10px; 
+            display: flex; flex-direction: column; align-items: center; 
+            text-align: center; cursor: pointer; position: relative; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
         .item.type-file { grid-column: span 2; flex-direction: row; text-align: left; padding: 22px 15px; }
+        .item-icon { font-size: 32px; margin-right: 15px; }
+        .item-name { font-weight: 600; font-size: 17px; flex-grow: 1; overflow: hidden; }
         
-        .item-icon { font-size: 32px; margin-bottom: 5px; }
-        .item.type-file .item-icon { margin-bottom: 0; margin-right: 15px; }
-        
-        .item-name { font-weight: 600; font-size: 17px; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
-        
-        /* Галочка ✅ */
         .check-mark { position: absolute; top: 10px; left: 10px; font-size: 16px; display: none; }
         .item.is-listened .check-mark { display: block; }
 
-        /* ПЛЕЕР */
-        #player-container { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; box-shadow: 0 -5px 20px rgba(0,0,0,0.15); display: none; flex-direction: column; border-radius: 25px 25px 0 0; z-index: 1000; padding: 10px 0 30px 0; }
-        #now-playing { font-size: 14px; font-weight: 700; text-align: center; padding: 5px 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* ОГРОМНЫЙ ПЛЕЕР */
+        #player-container { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(15,15,15,0.98); backdrop-filter: blur(15px);
+            display: none; flex-direction: column; border-radius: 25px 25px 0 0; 
+            z-index: 1000; padding: 15px 0 40px 0; border-top: 1px solid rgba(255,255,255,0.1);
+        }
         
-        .progress-wrapper { width: 100%; padding: 10px 0; }
-        #progress-bar { width: 100%; height: 14px; background: #eee; appearance: none; outline: none; margin: 0; }
-        #progress-bar::-webkit-slider-thumb { appearance: none; width: 26px; height: 26px; background: var(--tg-theme-button-color); border-radius: 50%; }
+        .progress-wrapper { width: 100%; padding: 15px 0; }
+        #progress-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.1); appearance: none; outline: none; margin: 0; }
+        #progress-bar::-webkit-slider-thumb { appearance: none; width: 28px; height: 28px; background: var(--tg-theme-button-color); border-radius: 50%; }
 
-        .time-info { display: flex; justify-content: space-between; padding: 0 20px; font-size: 13px; color: #888; }
-        .controls { display: flex; justify-content: center; align-items: center; gap: 45px; margin-top: 20px; }
-        .btn-play { width: 85px; height: 85px; border-radius: 50%; background: var(--tg-theme-button-color); color: white; border: none; font-size: 38px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(36,129,204,0.3); }
-        .btn-skip { background: none; border: none; font-size: 32px; color: #444; }
-        .close-x { text-align: right; padding: 0 20px; font-size: 32px; color: #ccc; cursor: pointer; }
+        .time-info { display: flex; justify-content: space-between; padding: 0 25px; font-size: 14px; color: #aaa; }
+        .controls { display: flex; justify-content: center; align-items: center; gap: 50px; margin-top: 25px; }
+        .btn-play { width: 90px; height: 90px; border-radius: 50%; background: var(--tg-theme-button-color); color: white; border: none; font-size: 42px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(56,151,240,0.4); }
+        .btn-skip { background: none; border: none; font-size: 35px; color: #fff; opacity: 0.8; }
+        .close-x { text-align: right; padding: 0 25px; font-size: 35px; color: #555; }
 
-        .back-btn { padding: 18px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; font-size: 17px; }
+        .back-btn { padding: 18px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; font-size: 18px; }
         
         /* АДМИНКА */
-        #admin-panel { display: none; padding: 15px; background: #e8f4fd; gap: 10px; border-bottom: 1px solid #cce5f7; }
-        .admin-btn { background: var(--tg-theme-button-color); color: white; border: none; padding: 14px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; }
-        .delete-btn { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; z-index: 10; }
+        #admin-panel { display: none; padding: 15px; background: rgba(0,0,0,0.6); gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 14px 22px; border-radius: 12px; font-weight: 600; }
+        .delete-btn { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; z-index: 10; }
+        .error-msg { color: #ffbcbc; padding: 20px; text-align: center; font-weight: bold; grid-column: span 2; }
     </style>
 </head>
 <body>
@@ -61,17 +88,17 @@
         <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
         <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
         <input type="file" id="file-input" multiple style="display:none">
-        <div id="upload-status" style="font-size: 13px; color: var(--tg-theme-button-color); margin-top: 8px; font-weight: 600;"></div>
+        <div id="upload-status" style="font-size: 13px; color: #3897f0; margin-top: 10px; text-align: center;"></div>
     </div>
 
-    <div class="header"><span class="logo">🪷</span><h2 id="folder-title">Лекторий</h2></div>
-    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Вернуться назад</div>
+    <div class="header"><h2>🪷 Лекторий</h2></div>
+    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад</div>
 
-    <div id="content">Загрузка лекций...</div>
+    <div id="content">Загрузка...</div>
 
     <div id="player-container">
         <div class="close-x" onclick="stopPlayer()">×</div>
-        <div id="now-playing"></div>
+        <div id="now-playing" style="text-align: center; font-weight: bold; padding: 0 20px;"></div>
         <div class="progress-wrapper">
             <input type="range" id="progress-bar" value="0" min="0" step="1">
         </div>
@@ -105,79 +132,36 @@
         let currentId = null;
         let currentFolderId = null;
 
-        const getListened = () => JSON.parse(localStorage.getItem('listened') || '[]');
-
         async function loadFolders() {
-            currentFolderId = null;
-            document.getElementById('back-container').style.display = 'none';
-            document.getElementById('folder-title').innerText = "Лекторий";
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?type=eq.folder&parent_id=eq.${ROOT_ID}`, { headers: { 'apikey': SUPABASE_KEY } });
-            render(await res.json());
+            try {
+                currentFolderId = null;
+                document.getElementById('back-container').style.display = 'none';
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/items?type=eq.folder&parent_id=eq.${ROOT_ID}`, { headers: { 'apikey': SUPABASE_KEY } });
+                if (!res.ok) throw new Error();
+                render(await res.json());
+            } catch (e) {
+                document.getElementById('content').innerHTML = "<div class='error-msg'>⚠️ Слишком много запросов. Подождите 5-10 минут.</div>";
+            }
         }
 
         async function loadFiles(id, name) {
-            currentFolderId = id;
-            document.getElementById('back-container').style.display = 'block';
-            document.getElementById('folder-title').innerText = name;
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
-            render(await res.json());
+            try {
+                currentFolderId = id;
+                document.getElementById('back-container').style.display = 'block';
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
+                if (!res.ok) throw new Error();
+                render(await res.json());
+            } catch (e) {
+                document.getElementById('content').innerHTML = "<div class='error-msg'>⚠️ Ошибка доступа. Попробуйте позже.</div>";
+            }
         }
 
         function render(items) {
             const container = document.getElementById('content');
             container.innerHTML = '';
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
-            
-            const list = getListened();
+            const list = JSON.parse(localStorage.getItem('listened') || '[]');
 
             items.forEach(item => {
                 const div = document.createElement('div');
-                div.className = `item type-${item.type} ${list.includes(item.id) ? 'is-listened' : ''}`;
-                div.id = `item-${item.id}`;
-                div.innerHTML = `
-                    ${isAdmin ? `<div class="delete-btn" onclick="event.stopPropagation(); deleteItem('${item.id}', '${item.type}')">×</div>` : ''}
-                    <div class="check-mark">✅</div>
-                    <div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div>
-                    <div class="item-name">${item.name}</div>
-                `;
-                div.onclick = () => item.type === 'folder' ? loadFiles(item.id, item.name) : play(item.url, item.name, item.id);
-                container.appendChild(div);
-            });
-        }
-
-        function play(url, name, id) {
-            currentId = id;
-            document.getElementById('now-playing').innerText = name;
-            audio.src = url;
-            document.getElementById('player-container').style.display = 'flex';
-            audio.play();
-            playBtn.innerText = '⏸';
-        }
-
-        function togglePlay() {
-            if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; }
-            else { audio.pause(); playBtn.innerText = '▶'; }
-        }
-
-        function skip(sec) { audio.currentTime += sec; }
-        function stopPlayer() { audio.pause(); document.getElementById('player-container').style.display = 'none'; }
-
-        audio.ontimeupdate = () => {
-            prog.max = audio.duration || 0;
-            prog.value = audio.currentTime;
-            document.getElementById('current-time').innerText = formatTime(audio.currentTime);
-            document.getElementById('duration-time').innerText = formatTime(audio.duration);
-        };
-        prog.oninput = () => { audio.currentTime = prog.value; };
-
-        function formatTime(s) {
-            if (!s || isNaN(s)) return "0:00";
-            let m = Math.floor(s / 60);
-            let sec = Math.floor(s % 60);
-            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
-        }
-
-        audio.onended = () => {
-            if (!currentId) return;
-            let list = getListened();
-            if (!list.includes(currentId)) {
+                div.className = `item type-${item.type} ${list.
