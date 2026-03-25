@@ -13,6 +13,7 @@
             --tg-theme-hint-color: #707579;
             --tg-theme-button-color: #2481cc;
             --tg-theme-button-text-color: #ffffff;
+            --danger-color: #ff3b30;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -20,91 +21,62 @@
             color: var(--tg-theme-text-color);
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            -webkit-user-select: none;
         }
 
-        /* Заголовок */
-        .header {
-            padding: 20px 15px;
-            background: var(--tg-theme-secondary-bg-color);
-            text-align: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
+        .header { padding: 20px 15px; background: var(--tg-theme-secondary-bg-color); text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
         h2 { margin: 0; font-size: 18px; font-weight: 600; }
 
-        /* Контент */
-        #content { padding: 10px; padding-bottom: 120px; }
+        #content { padding: 10px; padding-bottom: 140px; }
         
         .item {
-            display: flex; align-items: center;
-            padding: 12px 15px; margin-bottom: 8px;
-            background: var(--tg-theme-secondary-bg-color);
-            border-radius: 12px; cursor: pointer;
-            transition: transform 0.1s;
+            display: flex; align-items: center; padding: 12px 15px; margin-bottom: 8px;
+            background: var(--tg-theme-secondary-bg-color); border-radius: 12px; cursor: pointer;
         }
-        .item:active { transform: scale(0.98); background: rgba(0,0,0,0.05); }
         .item-icon { font-size: 22px; margin-right: 15px; }
-        .item-info { display: flex; flex-direction: column; }
+        .item-info { display: flex; flex-direction: column; flex-grow: 1; }
         .item-name { font-weight: 500; font-size: 15px; }
-        .item-type { font-size: 12px; color: var(--tg-theme-hint-color); }
 
-        /* Навигация */
-        .back-btn {
-            padding: 10px 15px; color: var(--tg-theme-button-color);
-            font-weight: 500; cursor: pointer; display: flex; align-items: center;
+        .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: 500; cursor: pointer; }
+
+        /* Админка */
+        #admin-panel { display: none; padding: 15px; background: #e8f4fd; border-bottom: 1px solid #cce5f7; }
+        .admin-btn { 
+            background: var(--tg-theme-button-color); color: white; border: none; 
+            padding: 8px 12px; border-radius: 8px; margin-right: 5px; cursor: pointer; font-size: 13px;
         }
+        .delete-btn { color: var(--danger-color); font-size: 18px; padding: 5px 10px; cursor: pointer; }
+        
+        /* Прогресс загрузки */
+        #upload-progress { display: none; font-size: 12px; color: var(--tg-theme-button-color); margin-top: 5px; }
 
-        /* Плеер внизу */
+        /* Плеер */
         #player-container {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--tg-theme-bg-color);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            padding: 15px; display: none; flex-direction: column;
-            border-radius: 20px 20px 0 0;
-            z-index: 100;
+            background: var(--tg-theme-bg-color); box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 15px; display: none; flex-direction: column; border-radius: 20px 20px 0 0; z-index: 100;
         }
-        #now-playing { font-size: 14px; font-weight: 600; margin-bottom: 10px; text-align: center; }
-        audio { width: 100%; height: 40px; }
-        .close-player { 
-            position: absolute; right: 15px; top: 10px; 
-            font-size: 20px; color: var(--tg-theme-hint-color); cursor: pointer; 
-        }
-
-        /* Секция администратора (скрыта по умолчанию) */
-        #admin-upload {
-            display: none;
-            margin: 10px; padding: 15px;
-            border: 2px dashed var(--tg-theme-button-color);
-            border-radius: 12px; text-align: center;
-            background: rgba(36, 129, 204, 0.05);
-        }
-        #file-input { display: none; }
-        .upload-label { color: var(--tg-theme-button-color); cursor: pointer; font-weight: bold; }
-        #status { font-size: 11px; margin-top: 5px; color: var(--tg-theme-hint-color); }
+        audio { width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2 id="folder-title">Лекторий</h2>
+    <div id="admin-panel">
+        <div style="font-weight: bold; margin-bottom: 10px; font-size: 12px; color: #555;">🛠 ПАНЕЛЬ АДМИНИСТРАТОРА</div>
+        <button class="admin-btn" onclick="createNewFolder()">+ Новая папка</button>
+        <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Загрузить файлы</button>
+        <input type="file" id="file-input" accept="audio/*" multiple style="display:none">
+        <div id="upload-progress"></div>
     </div>
 
-    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">
-        ⬅ Назад к папкам
-    </div>
-
-    <div id="admin-upload">
-        <label for="file-input" class="upload-label">➕ Загрузить новую лекцию</label>
-        <input type="file" id="file-input" accept="audio/*">
-        <div id="status">Выберите файл</div>
-    </div>
+    <div class="header"><h2 id="folder-title">Лекторий</h2></div>
+    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад</div>
 
     <div id="content">Загрузка...</div>
 
     <div id="player-container">
-        <div class="close-player" onclick="closePlayer()">×</div>
-        <div id="now-playing"></div>
-        <audio id="audio-player" controls controlsList="nodownload"></audio>
+        <div onclick="document.getElementById('audio-player').pause(); this.parentElement.style.display='none';" style="text-align:right; cursor:pointer;">×</div>
+        <div id="now-playing" style="font-size:14px; font-weight:600; text-align:center;"></div>
+        <audio id="audio-player" controls></audio>
     </div>
 
     <script>
@@ -115,91 +87,93 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmd2xmZHh3cW5ydnlwYWlmYXlpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDM2NTc3OSwiZXhwIjoyMDg5OTQxNzc5fQ.mBQPFZ7t_q_GsJrBVc1L1UlvKapmPBLGHXhLKdnUr3k';
         const ROOT_ID = '2a23cff1-1d43-4ce9-a952-65b7d7d3f1d0';
         
-        let currentFolderId = null;
-
-        // Проверка режима администратора через URL
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('admin') === 'true') {
-            document.getElementById('admin-upload').style.display = 'block';
-        }
+        const isAdmin = urlParams.get('admin') === 'true';
+        if (isAdmin) document.getElementById('admin-panel').style.display = 'block';
+
+        let currentFolderId = null;
 
         async function loadFolders() {
             currentFolderId = null;
             document.getElementById('back-container').style.display = 'none';
             document.getElementById('folder-title').innerText = "Лекторий";
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?type=eq.folder&parent_id=eq.${ROOT_ID}`, {
-                headers: { 'apikey': SUPABASE_KEY }
-            });
-            const data = await res.json();
-            renderItems(data);
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?type=eq.folder&parent_id=eq.${ROOT_ID}`, { headers: { 'apikey': SUPABASE_KEY } });
+            renderItems(await res.json());
         }
 
-        async function loadFiles(folderId, folderName) {
-            currentFolderId = folderId;
-            document.getElementById('back-container').style.display = 'flex';
-            document.getElementById('folder-title').innerText = folderName;
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${folderId}`, {
-                headers: { 'apikey': SUPABASE_KEY }
-            });
-            const data = await res.json();
-            renderItems(data);
+        async function loadFiles(id, name) {
+            currentFolderId = id;
+            document.getElementById('back-container').style.display = 'block';
+            document.getElementById('folder-title').innerText = name;
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
+            renderItems(await res.json());
         }
 
         function renderItems(items) {
             const container = document.getElementById('content');
             container.innerHTML = '';
+            items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
             
-            // Сортировка: сначала папки, потом файлы
-            items.sort((a, b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
-
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'item';
-                const icon = item.type === 'folder' ? '📁' : '🎧';
-                const subText = item.type === 'folder' ? 'Папка' : 'Аудиолекция';
-                
                 div.innerHTML = `
-                    <div class="item-icon">${icon}</div>
-                    <div class="item-info">
+                    <div class="item-icon">${item.type === 'folder' ? '📁' : '🎧'}</div>
+                    <div class="item-info" onclick="itemClick('${item.id}', '${item.name}', '${item.type}', '${item.url}')">
                         <span class="item-name">${item.name}</span>
-                        <span class="item-type">${subText}</span>
                     </div>
+                    ${isAdmin ? `<div class="delete-btn" onclick="deleteItem('${item.id}', '${item.type}')">🗑</div>` : ''}
                 `;
-                
-                div.onclick = () => {
-                    if (item.type === 'folder') {
-                        loadFiles(item.id, item.name);
-                    } else {
-                        playAudio(item.url, item.name);
-                    }
-                };
                 container.appendChild(div);
             });
         }
 
+        function itemClick(id, name, type, url) {
+            if (type === 'folder') loadFiles(id, name);
+            else playAudio(url, name);
+        }
+
         function playAudio(url, name) {
-            const container = document.getElementById('player-container');
-            const player = document.getElementById('audio-player');
+            const p = document.getElementById('audio-player');
             document.getElementById('now-playing').innerText = name;
-            player.src = url;
-            container.style.display = 'flex';
-            player.play();
+            p.src = url;
+            document.getElementById('player-container').style.display = 'flex';
+            p.play();
         }
 
-        function closePlayer() {
-            document.getElementById('audio-player').pause();
-            document.getElementById('player-container').style.display = 'none';
+        // --- ФУНКЦИИ АДМИНИСТРАТОРА ---
+
+        async function createNewFolder() {
+            const name = prompt("Введите название папки:");
+            if (!name) return;
+            await fetch(`${SUPABASE_URL}/rest/v1/items`, {
+                method: 'POST',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, type: 'folder', parent_id: ROOT_ID })
+            });
+            loadFolders();
         }
 
-        // Загрузка для админа
+        async function deleteItem(id, type) {
+            if (!confirm(`Удалить эту ${type === 'folder' ? 'папку и всё её содержимое' : 'лекцию'}?`)) return;
+            if (type === 'folder') {
+                await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+            }
+            await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+            currentFolderId ? loadFiles(currentFolderId, document.getElementById('folder-title').innerText) : loadFolders();
+        }
+
         document.getElementById('file-input').onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file || !currentFolderId) return;
+            const files = e.target.files;
+            if (!files.length || !currentFolderId) { alert("Выберите папку!"); return; }
 
-            const status = document.getElementById('status');
-            status.innerText = "⏳ Загрузка...";
-            
-            try {
+            const progress = document.getElementById('upload-progress');
+            progress.style.display = 'block';
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                progress.innerText = `⏳ Загрузка ${i+1} из ${files.length}: ${file.name}`;
+                
                 const path = `audio-files/${Date.now()}_${file.name}`;
                 await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, {
                     method: 'POST',
@@ -212,12 +186,10 @@
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: file.name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId })
                 });
-
-                status.innerText = "✅ Готово";
-                loadFiles(currentFolderId, document.getElementById('folder-title').innerText);
-            } catch (err) {
-                status.innerText = "❌ Ошибка";
             }
+
+            progress.innerText = "✅ Все файлы загружены!";
+            loadFiles(currentFolderId, document.getElementById('folder-title').innerText);
         };
 
         loadFolders();
