@@ -10,135 +10,90 @@
             --tg-theme-bg-color: #ffffff;
             --tg-theme-secondary-bg-color: #f5f5f5;
             --tg-theme-text-color: #000000;
-            --tg-theme-hint-color: #999999;
             --tg-theme-button-color: #2481cc;
             --star-color: #ffcc00;
             --check-color: #2ecc71;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            margin: 0; padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 0; }
 
-        .header { 
-            padding: 18px; 
-            background: var(--tg-theme-secondary-bg-color); 
-            display: flex; align-items: center; justify-content: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .logo { font-size: 28px; margin-right: 12px; }
-        h2 { margin: 0; font-size: 19px; font-weight: 700; }
+        /* Шапка */
+        .header { padding: 15px; background: var(--tg-theme-secondary-bg-color); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ddd; }
+        .logo { font-size: 26px; margin-right: 10px; }
+        h2 { margin: 0; font-size: 18px; }
 
-        #content { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            padding: 12px; 
-            padding-bottom: 160px; 
-        }
-
-        /* КНОПКИ ПАПОК (2 в ряд) */
-        .item {
-            background: var(--tg-theme-secondary-bg-color);
-            border-radius: 16px;
-            padding: 20px 10px;
-            display: flex; flex-direction: column;
-            align-items: center; text-align: center;
-            cursor: pointer; position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-        }
-
-        /* КНОПКИ ЛЕКЦИЙ (на всю ширину) */
-        .item.type-file {
-            grid-column: span 2;
-            flex-direction: row;
-            text-align: left;
-            padding: 18px 15px;
-            align-items: center;
-        }
-
-        .item-icon { font-size: 32px; margin-bottom: 8px; }
-        .item.type-file .item-icon { margin-bottom: 0; margin-right: 15px; font-size: 28px; }
-
-        .item-info { flex-grow: 1; min-width: 0; }
-        .item-name { 
-            font-weight: 600; font-size: 16px; line-height: 1.3;
-            word-wrap: break-word;
-        }
-
-        /* СТАТУСЫ (✅ и ⭐) */
-        .file-status {
-            display: flex; align-items: center; 
-            gap: 15px; margin-left: 10px;
-        }
-        .check-mark { font-size: 18px; color: var(--check-color); display: none; }
-        .item.is-listened .check-mark { display: inline; }
-
-        /* ЗОЛОТАЯ ЗВЕЗДА (Увеличенная зона клика) */
-        .star-mark { 
-            font-size: 26px; color: #ddd; 
-            padding: 10px; margin: -10px; /* Увеличиваем область касания */
-            transition: transform 0.2s;
-        }
+        /* Сетка папок и лекций */
+        #content { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 220px; }
+        .item { background: var(--tg-theme-secondary-bg-color); border-radius: 16px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; position: relative; }
+        .item.type-file { grid-column: span 2; flex-direction: row; text-align: left; padding: 20px 15px; }
+        .item-icon { font-size: 30px; margin-bottom: 5px; }
+        .item.type-file .item-icon { margin-bottom: 0; margin-right: 15px; }
+        .item-name { font-weight: 600; font-size: 16px; flex-grow: 1; }
+        .star-mark { font-size: 28px; color: #ddd; padding: 5px; }
         .item.is-favorite .star-mark { color: var(--star-color); }
-        .star-mark:active { transform: scale(1.3); }
+        .item.is-listened::after { content: '✅'; position: absolute; top: 5px; left: 5px; font-size: 14px; }
 
-        .back-btn { 
-            padding: 15px; color: var(--tg-theme-button-color); 
-            font-weight: 600; font-size: 17px; cursor: pointer; 
-        }
-
-        /* ПЛЕЕР (Более массивный для пальцев) */
+        /* --- НОВЫЙ ОГРОМНЫЙ ПЛЕЕР --- */
         #player-container {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--tg-theme-bg-color);
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
-            padding: 20px; display: none; flex-direction: column;
-            border-radius: 24px 24px 0 0; z-index: 100;
+            background: #fff; box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+            display: none; flex-direction: column;
+            border-radius: 25px 25px 0 0; z-index: 1000; padding: 15px 0 30px 0;
         }
-        #now-playing { font-size: 15px; font-weight: 700; margin-bottom: 12px; text-align: center; }
-        audio { width: 100%; height: 50px; }
-        .close-player { text-align: right; padding: 5px; font-size: 28px; color: var(--tg-theme-hint-color); }
 
-        /* АДМИНКА */
-        #admin-panel { display: none; padding: 15px; background: #e8f4fd; gap: 10px; }
-        .admin-btn { 
-            background: var(--tg-theme-button-color); color: white; border: none; 
-            padding: 12px 18px; border-radius: 10px; font-weight: 600; 
-        }
-        .delete-btn { 
-            position: absolute; top: -5px; right: -5px; 
-            background: #ff3b30; color: white; width: 28px; height: 28px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; border: 2px solid white;
-        }
+        /* Название лекции в плеере */
+        #now-playing { font-size: 14px; font-weight: 700; text-align: center; padding: 0 20px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Полоса прогресса на весь экран */
+        .progress-wrapper { width: 100%; padding: 10px 0; touch-action: none; }
+        #progress-bar { width: 100%; height: 12px; background: #eee; appearance: none; outline: none; margin: 0; }
+        #progress-bar::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: var(--tg-theme-button-color); border-radius: 50%; }
+
+        /* Время */
+        .time-info { display: flex; justify-content: space-between; padding: 0 20px; font-size: 12px; color: #888; margin-top: -5px; }
+
+        /* Кнопки управления */
+        .controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 15px; }
+        .btn-play { width: 80px; height: 80px; border-radius: 50%; background: var(--tg-theme-button-color); color: white; border: none; font-size: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(36,129,204,0.3); }
+        .btn-skip { background: none; border: none; font-size: 30px; color: #444; }
+        .close-x { position: absolute; top: 10px; right: 20px; font-size: 24px; color: #ccc; }
+
+        .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; }
+        #admin-panel { display: none; padding: 10px; background: #eef; gap: 10px; }
     </style>
 </head>
 <body>
 
     <div id="admin-panel">
-        <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
-        <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
-        <input type="file" id="file-input" accept="audio/*" multiple style="display:none">
+        <button onclick="createNewFolder()">+ Папка</button>
+        <button onclick="document.getElementById('file-input').click()">+ Файлы</button>
+        <input type="file" id="file-input" multiple style="display:none">
     </div>
 
-    <div class="header">
-        <span class="logo">🪷</span>
-        <h2 id="folder-title">Лекторий</h2>
-    </div>
-
-    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад в меню</div>
+    <div class="header"><span class="logo">🪷</span><h2 id="folder-title">Лекторий</h2></div>
+    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад</div>
 
     <div id="content">Загрузка...</div>
 
     <div id="player-container">
-        <div class="close-player" onclick="stopPlayer()">×</div>
-        <div id="now-playing"></div>
-        <audio id="audio-player" controls></audio>
+        <div class="close-x" onclick="stopPlayer()">×</div>
+        <div id="now-playing">Название лекции</div>
+        
+        <div class="progress-wrapper">
+            <input type="range" id="progress-bar" value="0" min="0" step="1">
+        </div>
+        <div class="time-info">
+            <span id="current-time">0:00</span>
+            <span id="duration-time">0:00</span>
+        </div>
+
+        <div class="controls">
+            <button class="btn-skip" onclick="skip(-15)">⏪</button>
+            <button id="play-pause" class="btn-play" onclick="togglePlay()">▶</button>
+            <button class="btn-skip" onclick="skip(15)">⏩</button>
+        </div>
     </div>
+
+    <audio id="main-audio"></audio>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -151,22 +106,18 @@
         const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
         if (isAdmin) document.getElementById('admin-panel').style.display = 'flex';
 
-        let currentFolderId = null;
-        let currentPlayingId = null;
-
-        const getFavs = () => JSON.parse(localStorage.getItem('favs') || '[]');
-        const getListened = () => JSON.parse(localStorage.getItem('listened') || '[]');
+        const audio = document.getElementById('main-audio');
+        const prog = document.getElementById('progress-bar');
+        const playBtn = document.getElementById('play-pause');
+        let currentId = null;
 
         async function loadFolders() {
-            currentFolderId = null;
             document.getElementById('back-container').style.display = 'none';
-            document.getElementById('folder-title').innerText = "Лекторий";
             const res = await fetch(`${SUPABASE_URL}/rest/v1/items?type=eq.folder&parent_id=eq.${ROOT_ID}`, { headers: { 'apikey': SUPABASE_KEY } });
             render(await res.json());
         }
 
         async function loadFiles(id, name) {
-            currentFolderId = id;
             document.getElementById('back-container').style.display = 'block';
             document.getElementById('folder-title').innerText = name;
             const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
@@ -177,30 +128,17 @@
             const container = document.getElementById('content');
             container.innerHTML = '';
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
-            
-            const favs = getFavs();
-            const listened = getListened();
+            const favs = JSON.parse(localStorage.getItem('favs') || '[]');
+            const list = JSON.parse(localStorage.getItem('listened') || '[]');
 
             items.forEach(item => {
                 const isFav = favs.includes(item.id);
-                const isList = listened.includes(item.id);
-                
                 const div = document.createElement('div');
-                div.className = `item type-${item.type} ${isFav ? 'is-favorite' : ''} ${isList ? 'is-listened' : ''}`;
-                div.id = `item-${item.id}`;
-                
+                div.className = `item type-${item.type} ${isFav ? 'is-favorite' : ''} ${list.includes(item.id) ? 'is-listened' : ''}`;
                 div.innerHTML = `
-                    ${isAdmin ? `<div class="delete-btn" onclick="event.stopPropagation(); deleteItem('${item.id}', '${item.type}')">×</div>` : ''}
                     <div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div>
-                    <div class="item-info">
-                        <div class="item-name">${item.name}</div>
-                    </div>
-                    ${item.type === 'file' ? `
-                        <div class="file-status">
-                            <span class="check-mark">✅</span>
-                            <span class="star-mark" onclick="event.stopPropagation(); toggleFav('${item.id}')">⭐</span>
-                        </div>
-                    ` : ''}
+                    <div class="item-name">${item.name}</div>
+                    ${item.type === 'file' ? `<div class="star-mark" onclick="event.stopPropagation(); toggleFav('${item.id}')">⭐</div>` : ''}
                 `;
                 div.onclick = () => item.type === 'folder' ? loadFiles(item.id, item.name) : play(item.url, item.name, item.id);
                 container.appendChild(div);
@@ -208,66 +146,49 @@
         }
 
         function play(url, name, id) {
-            currentPlayingId = id;
+            currentId = id;
             document.getElementById('now-playing').innerText = name;
-            const a = document.getElementById('audio-player');
-            a.src = url;
+            audio.src = url;
             document.getElementById('player-container').style.display = 'flex';
-            a.play();
+            audio.play();
+            playBtn.innerText = '⏸';
         }
 
-        function stopPlayer() {
-            document.getElementById('audio-player').pause();
-            document.getElementById('player-container').style.display = 'none';
+        function togglePlay() {
+            if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; }
+            else { audio.pause(); playBtn.innerText = '▶'; }
         }
 
-        document.getElementById('audio-player').onended = () => {
-            if (!currentPlayingId) return;
-            const list = getListened();
-            if (!list.includes(currentPlayingId)) {
-                list.push(currentPlayingId);
-                localStorage.setItem('listened', JSON.stringify(list));
-                document.getElementById(`item-${currentPlayingId}`)?.classList.add('is-listened');
-            }
+        function skip(sec) { audio.currentTime += sec; }
+        function stopPlayer() { audio.pause(); document.getElementById('player-container').style.display = 'none'; }
+
+        // Работа с прогрессом
+        audio.ontimeupdate = () => {
+            prog.max = audio.duration || 0;
+            prog.value = audio.currentTime;
+            document.getElementById('current-time').innerText = formatTime(audio.currentTime);
+            document.getElementById('duration-time').innerText = formatTime(audio.duration);
         };
+        prog.oninput = () => { audio.currentTime = prog.value; };
+
+        function formatTime(s) {
+            if (!s) return "0:00";
+            let m = Math.floor(s / 60);
+            let sec = Math.floor(s % 60);
+            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+        }
 
         function toggleFav(id) {
-            const favs = getFavs();
+            let favs = JSON.parse(localStorage.getItem('favs') || '[]');
             const idx = favs.indexOf(id);
-            const el = document.getElementById(`item-${id}`);
-            if (idx === -1) {
-                favs.push(id);
-                el.classList.add('is-favorite');
-            } else {
-                favs.splice(idx, 1);
-                el.classList.remove('is-favorite');
-            }
+            if (idx === -1) favs.push(id); else favs.splice(idx, 1);
             localStorage.setItem('favs', JSON.stringify(favs));
+            location.reload();
         }
 
-        async function createNewFolder() {
-            const n = prompt("Имя папки:");
-            if (!n) return;
-            await fetch(`${SUPABASE_URL}/rest/v1/items`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: n, type: 'folder', parent_id: ROOT_ID }) });
-            loadFolders();
-        }
-
-        async function deleteItem(id, type) {
-            if (!confirm("Удалить?")) return;
-            if (type === 'folder') await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-            await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-            currentFolderId ? loadFiles(currentFolderId, document.getElementById('folder-title').innerText) : loadFolders();
-        }
-
-        document.getElementById('file-input').onchange = async (e) => {
-            const files = e.target.files;
-            if (!files.length || !currentFolderId) return;
-            for (let f of files) {
-                const path = `audio-files/${Date.now()}_${f.name}`;
-                await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': f.type }, body: f });
-                await fetch(`${SUPABASE_URL}/rest/v1/items`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: f.name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId }) });
-            }
-            loadFiles(currentFolderId, document.getElementById('folder-title').innerText);
+        audio.onended = () => {
+            let list = JSON.parse(localStorage.getItem('listened') || '[]');
+            if (!list.includes(currentId)) { list.push(currentId); localStorage.setItem('listened', JSON.stringify(list)); }
         };
 
         loadFolders();
