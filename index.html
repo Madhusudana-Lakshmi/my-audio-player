@@ -37,11 +37,11 @@
             border: 1px solid rgba(255,255,255,0.1); position: relative;
         }
 
-        .item.type-file { grid-column: span 2; display: flex; align-items: center; text-align: left; padding: 15px; }
+        .item.type-file { grid-column: span 2; display: flex; align-items: center; text-align: left; padding: 12px; }
         .item-icon { font-size: 28px; margin-bottom: 5px; }
-        .item.type-file .item-icon { margin: 0 15px 0 0; }
+        .item.type-file .item-icon { margin: 0 15px 0 0; font-size: 20px; }
+        .item-name { font-size: 14px; word-break: break-word; }
 
-        /* Кнопка удаления */
         .del-btn {
             position: absolute; top: 5px; right: 10px; 
             color: #ff4d4d; font-size: 24px; font-weight: bold; 
@@ -50,21 +50,27 @@
 
         #player-container { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(0, 0, 0, 0.95); padding: 20px 0 40px; display: none; 
+            background: rgba(0, 0, 0, 0.95); padding: 15px 0 35px; display: none; 
             flex-direction: column; border-top: 1px solid #333; z-index: 1000;
             border-radius: 20px 20px 0 0;
         }
-        .controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; }
-        .btn-play { width: 80px; height: 80px; border-radius: 50%; background: var(--tg-theme-button-color); border: none; font-size: 35px; color: #fff; }
+
+        .time-info { 
+            display: flex; justify-content: space-between; 
+            width: 90%; margin: 0 auto 5px; 
+            font-size: 12px; font-family: monospace; color: #aaa;
+        }
+
+        .controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 10px; }
+        .btn-play { width: 70px; height: 70px; border-radius: 50%; background: var(--tg-theme-button-color); border: none; font-size: 30px; color: #fff; }
         
-        #progress-bar { width: 90%; margin: 10px auto; height: 10px; }
+        #progress-bar { width: 90%; margin: 0 auto 10px; height: 10px; accent-color: var(--tg-theme-button-color); }
         .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; }
         
         #admin-panel { display: none; padding: 10px; background: rgba(0,0,0,0.5); flex-direction: column; align-items: center; gap: 10px; }
         .admin-buttons { display: flex; gap: 10px; }
         .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;}
-        #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; text-align: center; }
-        .error-box { grid-column: span 2; padding: 20px; background: rgba(255,0,0,0.2); border-radius: 10px; text-align: center; color: #ffbcbc; }
+        #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -72,25 +78,32 @@
     <div id="admin-panel">
         <div class="admin-buttons">
             <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
-            <button class="admin-btn" id="upload-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
+            <button class="admin-btn" id="upload-btn" onclick="document.getElementById('file-input').click()" style="display:none">+ Файлы</button>
         </div>
         <div id="upload-status"></div>
         <input type="file" id="file-input" multiple style="display:none">
     </div>
 
     <div class="header"><h2>🪷 Лекторий</h2></div>
-    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад</div>
-    <div id="content">Загрузка данных...</div>
+    <div id="back-container" class="back-btn" style="display: none;" onclick="goBack()">⬅ Назад</div>
+    <div id="content">Загрузка...</div>
 
     <div id="player-container">
-        <div id="now-playing" style="text-align: center; margin-bottom: 10px; padding: 0 10px;"></div>
-        <input type="range" id="progress-bar" value="0">
-        <div class="controls">
-            <button onclick="skip(-15)" style="background:none; border:none; color:#fff; font-size:30px; cursor: pointer;">⏪</button>
-            <button id="play-pause" class="btn-play" onclick="togglePlay()">▶</button>
-            <button onclick="skip(15)" style="background:none; border:none; color:#fff; font-size:30px; cursor: pointer;">⏩</button>
+        <div id="now-playing" style="text-align: center; margin-bottom: 10px; padding: 0 15px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+        
+        <div class="time-info">
+            <span id="current-time">0:00</span>
+            <span id="duration-time">0:00</span>
         </div>
-        <button onclick="stopPlayer()" style="margin-top:20px; background:none; border:none; color:#aaa; font-size: 16px; cursor: pointer;">Закрыть плеер</button>
+        
+        <input type="range" id="progress-bar" value="0">
+        
+        <div class="controls">
+            <button onclick="skip(-15)" style="background:none; border:none; color:#fff; font-size:30px;">⏪</button>
+            <button id="play-pause" class="btn-play" onclick="togglePlay()">▶</button>
+            <button onclick="skip(15)" style="background:none; border:none; color:#fff; font-size:30px;">⏩</button>
+        </div>
+        <button onclick="stopPlayer()" style="margin-top:15px; background:none; border:none; color:#666; font-size: 14px;">Закрыть</button>
     </div>
 
     <audio id="main-audio"></audio>
@@ -108,31 +121,39 @@
 
         const audio = document.getElementById('main-audio');
         const prog = document.getElementById('progress-bar');
+        
+        // Храним историю папок для корректной работы кнопки "Назад"
+        let folderHistory = []; 
         let currentFolderId = null;
 
-        async function loadFolders() {
+        async function loadContent(folderId, addToHistory = true) {
             try {
-                currentFolderId = null;
-                document.getElementById('back-container').style.display = 'none';
-                document.getElementById('upload-btn').style.display = 'none';
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${ROOT_ID}&select=*`, {
+                if (addToHistory && currentFolderId !== null) {
+                    folderHistory.push(currentFolderId);
+                }
+                currentFolderId = folderId;
+
+                // Показываем кнопку назад, если мы не в корне
+                document.getElementById('back-container').style.display = folderId === ROOT_ID ? 'none' : 'block';
+                // Кнопка загрузки файлов видна только внутри папок (не в корне)
+                document.getElementById('upload-btn').style.display = folderId === ROOT_ID ? 'none' : 'block';
+
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${folderId}&select=*`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
-                if (!res.ok) throw new Error(res.status);
                 render(await res.json());
             } catch (err) {
-                document.getElementById('content').innerHTML = `<div class='error-box'>Ошибка загрузки.</div>`;
+                console.error(err);
             }
         }
 
-        async function loadFiles(id) {
-            currentFolderId = id;
-            document.getElementById('back-container').style.display = 'block';
-            document.getElementById('upload-btn').style.display = 'block';
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}&select=*`, {
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-            render(await res.json());
+        function goBack() {
+            if (folderHistory.length > 0) {
+                const prevFolder = folderHistory.pop();
+                loadContent(prevFolder, false);
+            } else {
+                loadContent(ROOT_ID, false);
+            }
         }
 
         function render(items) {
@@ -153,7 +174,7 @@
                     div.appendChild(del);
                 }
 
-                div.onclick = () => item.type === 'folder' ? loadFiles(item.id) : play(item.url, item.name);
+                div.onclick = () => item.type === 'folder' ? loadContent(item.id) : play(item.url, item.name);
                 container.appendChild(div);
             });
         }
@@ -164,7 +185,14 @@
                 method: 'DELETE',
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
             });
-            if (currentFolderId) loadFiles(currentFolderId); else loadFolders();
+            loadContent(currentFolderId, false);
+        }
+
+        function formatTime(s) {
+            if (!s) return "0:00";
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
         function play(url, name) {
@@ -183,29 +211,32 @@
         function skip(s) { audio.currentTime += s; }
         function stopPlayer() { audio.pause(); document.getElementById('player-container').style.display = 'none'; }
 
-        audio.ontimeupdate = () => { prog.max = audio.duration || 0; prog.value = audio.currentTime; };
+        audio.ontimeupdate = () => {
+            prog.max = audio.duration || 0;
+            prog.value = audio.currentTime;
+            document.getElementById('current-time').innerText = formatTime(audio.currentTime);
+            if (audio.duration) document.getElementById('duration-time').innerText = formatTime(audio.duration);
+        };
         prog.oninput = () => { audio.currentTime = prog.value; };
 
         async function createNewFolder() {
             const n = prompt("Имя папки:");
             if (!n) return;
-            const parent = currentFolderId ? currentFolderId : ROOT_ID;
             await fetch(`${SUPABASE_URL}/rest/v1/items`, {
                 method: 'POST',
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: n, type: 'folder', parent_id: parent })
+                body: JSON.stringify({ name: n, type: 'folder', parent_id: currentFolderId })
             });
-            if (currentFolderId) loadFiles(currentFolderId); else loadFolders();
+            loadContent(currentFolderId, false);
         }
 
         document.getElementById('file-input').onchange = async (e) => {
             const files = e.target.files;
-            if (!files.length || !currentFolderId) return;
             const status = document.getElementById('upload-status');
             for (let i = 0; i < files.length; i++) {
-                status.innerText = `⏳ Загрузка ${i+1}/${files.length}`;
+                status.innerText = `⏳ ${i+1}/${files.length}`;
                 const file = files[i];
-                const path = `audio-files/${Date.now()}_${file.name}`;
+                const path = `audio-files/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
                 await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, { 
                     method: 'POST', 
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }, 
@@ -217,11 +248,13 @@
                     body: JSON.stringify({ name: file.name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId }) 
                 });
             }
-            status.innerText = "";
-            loadFiles(currentFolderId);
+            status.innerText = "✅ Готово";
+            setTimeout(() => status.innerText = "", 2000);
+            loadContent(currentFolderId, false);
         };
 
-        loadFolders();
+        // Запуск с корня
+        loadContent(ROOT_ID, false);
     </script>
 </body>
 </html>
