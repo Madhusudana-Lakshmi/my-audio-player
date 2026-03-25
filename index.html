@@ -11,7 +11,6 @@
             --tg-theme-secondary-bg-color: #f5f5f5;
             --tg-theme-text-color: #000000;
             --tg-theme-button-color: #2481cc;
-            --star-color: #ffcc00;
             --check-color: #2ecc71;
         }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -22,21 +21,16 @@
 
         #content { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 220px; }
         
-        .item { background: var(--tg-theme-secondary-bg-color); border-radius: 16px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .item.type-file { grid-column: span 2; flex-direction: row; text-align: left; padding: 18px 15px; }
+        .item { background: var(--tg-theme-secondary-bg-color); border-radius: 16px; padding: 25px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .item.type-file { grid-column: span 2; flex-direction: row; text-align: left; padding: 22px 15px; }
         
-        .item-icon { font-size: 30px; margin-bottom: 5px; }
+        .item-icon { font-size: 32px; margin-bottom: 5px; }
         .item.type-file .item-icon { margin-bottom: 0; margin-right: 15px; }
         
-        .item-name { font-weight: 600; font-size: 16px; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
+        .item-name { font-weight: 600; font-size: 17px; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
         
-        /* Звездочка */
-        .star-mark { font-size: 30px; color: #ddd; padding: 5px; transition: color 0.2s, transform 0.1s; }
-        .item.is-favorite .star-mark { color: var(--star-color); }
-        .star-mark:active { transform: scale(1.2); }
-
-        /* Галочка */
-        .check-mark { position: absolute; top: 8px; left: 8px; font-size: 14px; display: none; }
+        /* Галочка ✅ */
+        .check-mark { position: absolute; top: 10px; left: 10px; font-size: 16px; display: none; }
         .item.is-listened .check-mark { display: block; }
 
         /* ПЛЕЕР */
@@ -44,21 +38,21 @@
         #now-playing { font-size: 14px; font-weight: 700; text-align: center; padding: 5px 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .progress-wrapper { width: 100%; padding: 10px 0; }
-        #progress-bar { width: 100%; height: 12px; background: #eee; appearance: none; outline: none; margin: 0; }
-        #progress-bar::-webkit-slider-thumb { appearance: none; width: 24px; height: 24px; background: var(--tg-theme-button-color); border-radius: 50%; }
+        #progress-bar { width: 100%; height: 14px; background: #eee; appearance: none; outline: none; margin: 0; }
+        #progress-bar::-webkit-slider-thumb { appearance: none; width: 26px; height: 26px; background: var(--tg-theme-button-color); border-radius: 50%; }
 
-        .time-info { display: flex; justify-content: space-between; padding: 0 20px; font-size: 12px; color: #888; }
-        .controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 15px; }
-        .btn-play { width: 80px; height: 80px; border-radius: 50%; background: var(--tg-theme-button-color); color: white; border: none; font-size: 35px; display: flex; align-items: center; justify-content: center; }
-        .btn-skip { background: none; border: none; font-size: 30px; color: #444; }
-        .close-x { text-align: right; padding: 0 20px; font-size: 30px; color: #ccc; cursor: pointer; }
+        .time-info { display: flex; justify-content: space-between; padding: 0 20px; font-size: 13px; color: #888; }
+        .controls { display: flex; justify-content: center; align-items: center; gap: 45px; margin-top: 20px; }
+        .btn-play { width: 85px; height: 85px; border-radius: 50%; background: var(--tg-theme-button-color); color: white; border: none; font-size: 38px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(36,129,204,0.3); }
+        .btn-skip { background: none; border: none; font-size: 32px; color: #444; }
+        .close-x { text-align: right; padding: 0 20px; font-size: 32px; color: #ccc; cursor: pointer; }
 
-        .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; font-size: 16px; }
+        .back-btn { padding: 18px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; font-size: 17px; }
         
         /* АДМИНКА */
         #admin-panel { display: none; padding: 15px; background: #e8f4fd; gap: 10px; border-bottom: 1px solid #cce5f7; }
-        .admin-btn { background: var(--tg-theme-button-color); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; }
-        .delete-btn { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid white; z-index: 10; }
+        .admin-btn { background: var(--tg-theme-button-color); color: white; border: none; padding: 14px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; }
+        .delete-btn { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; z-index: 10; }
     </style>
 </head>
 <body>
@@ -67,13 +61,13 @@
         <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
         <button class="admin-btn" onclick="document.getElementById('file-input').click()">+ Файлы</button>
         <input type="file" id="file-input" multiple style="display:none">
-        <div id="upload-status" style="font-size: 12px; color: var(--tg-theme-button-color); margin-top: 5px;"></div>
+        <div id="upload-status" style="font-size: 13px; color: var(--tg-theme-button-color); margin-top: 8px; font-weight: 600;"></div>
     </div>
 
     <div class="header"><span class="logo">🪷</span><h2 id="folder-title">Лекторий</h2></div>
-    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад в меню</div>
+    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Вернуться назад</div>
 
-    <div id="content">Загрузка...</div>
+    <div id="content">Загрузка лекций...</div>
 
     <div id="player-container">
         <div class="close-x" onclick="stopPlayer()">×</div>
@@ -111,7 +105,6 @@
         let currentId = null;
         let currentFolderId = null;
 
-        const getFavs = () => JSON.parse(localStorage.getItem('favs') || '[]');
         const getListened = () => JSON.parse(localStorage.getItem('listened') || '[]');
 
         async function loadFolders() {
@@ -135,20 +128,17 @@
             container.innerHTML = '';
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
             
-            const favs = getFavs();
             const list = getListened();
 
             items.forEach(item => {
-                const isFav = favs.includes(item.id);
                 const div = document.createElement('div');
-                div.className = `item type-${item.type} ${isFav ? 'is-favorite' : ''} ${list.includes(item.id) ? 'is-listened' : ''}`;
+                div.className = `item type-${item.type} ${list.includes(item.id) ? 'is-listened' : ''}`;
                 div.id = `item-${item.id}`;
                 div.innerHTML = `
                     ${isAdmin ? `<div class="delete-btn" onclick="event.stopPropagation(); deleteItem('${item.id}', '${item.type}')">×</div>` : ''}
                     <div class="check-mark">✅</div>
                     <div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div>
                     <div class="item-name">${item.name}</div>
-                    ${item.type === 'file' ? `<div class="star-mark" onclick="event.stopPropagation(); toggleFav('${item.id}')">⭐</div>` : ''}
                 `;
                 div.onclick = () => item.type === 'folder' ? loadFiles(item.id, item.name) : play(item.url, item.name, item.id);
                 container.appendChild(div);
@@ -187,86 +177,7 @@
             return `${m}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
-        function toggleFav(id) {
-            let favs = getFavs();
-            const idx = favs.indexOf(id);
-            const el = document.getElementById(`item-${id}`);
-            if (idx === -1) {
-                favs.push(id);
-                el.classList.add('is-favorite');
-            } else {
-                favs.splice(idx, 1);
-                el.classList.remove('is-favorite');
-            }
-            localStorage.setItem('favs', JSON.stringify(favs));
-        }
-
         audio.onended = () => {
             if (!currentId) return;
             let list = getListened();
             if (!list.includes(currentId)) {
-                list.push(currentId);
-                localStorage.setItem('listened', JSON.stringify(list));
-                document.getElementById(`item-${currentId}`)?.classList.add('is-listened');
-            }
-        };
-
-        // --- ФУНКЦИИ АДМИНИСТРАТОРА (ИСПРАВЛЕНЫ) ---
-
-        async function createNewFolder() {
-            const n = prompt("Название новой папки:");
-            if (!n) return;
-            await fetch(`${SUPABASE_URL}/rest/v1/items`, {
-                method: 'POST',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: n, type: 'folder', parent_id: ROOT_ID })
-            });
-            loadFolders();
-        }
-
-        async function deleteItem(id, type) {
-            if (!confirm("Удалить безвозвратно?")) return;
-            if (type === 'folder') {
-                await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-            }
-            await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-            currentFolderId ? loadFiles(currentFolderId, document.getElementById('folder-title').innerText) : loadFolders();
-        }
-
-        document.getElementById('file-input').onchange = async (e) => {
-            const files = e.target.files;
-            if (!files.length || !currentFolderId) { alert("Сначала войдите в папку!"); return; }
-            const status = document.getElementById('upload-status');
-            
-            for (let i = 0; i < files.length; i++) {
-                const f = files[i];
-                status.innerText = `⏳ Загрузка ${i+1}/${files.length}: ${f.name}`;
-                const path = `audio-files/${Date.now()}_${f.name}`;
-                
-                // 1. В Storage
-                await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, {
-                    method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': f.type },
-                    body: f
-                });
-
-                // 2. В Таблицу
-                await fetch(`${SUPABASE_URL}/rest/v1/items`, {
-                    method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        name: f.name, 
-                        type: 'file', 
-                        url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, 
-                        parent_id: currentFolderId 
-                    })
-                });
-            }
-            status.innerText = "✅ Загрузка завершена!";
-            loadFiles(currentFolderId, document.getElementById('folder-title').innerText);
-        };
-
-        loadFolders();
-    </script>
-</body>
-</html>
