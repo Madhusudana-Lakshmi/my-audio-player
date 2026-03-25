@@ -2,13 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vaishnava Lectoriya</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --tg-theme-bg-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f0f0f0;
             --tg-theme-text-color: #000000;
+            --tg-theme-hint-color: #707579;
             --tg-theme-button-color: #2481cc;
             --tg-theme-button-text-color: #ffffff;
         }
@@ -16,73 +18,92 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-bg-color);
             color: var(--tg-theme-text-color);
-            margin: 0; padding: 15px;
-            display: flex; flex-direction: column; align-items: center;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
+            -webkit-user-select: none;
         }
-        h2 { margin-bottom: 20px; font-size: 20px; text-align: center; }
-        
-        /* Список папок и файлов */
-        #content { width: 100%; max-width: 400px; }
-        .item {
-            padding: 12px; margin-bottom: 8px;
-            background: rgba(0,0,0,0.05); border-radius: 10px;
-            cursor: pointer; display: flex; align-items: center;
-            transition: background 0.2s;
-        }
-        .item:active { background: rgba(0,0,0,0.1); }
-        .item-icon { margin-right: 12px; font-size: 20px; }
-        .item-name { flex-grow: 1; font-weight: 500; }
 
-        /* Плеер */
+        /* Заголовок */
+        .header {
+            padding: 20px 15px;
+            background: var(--tg-theme-secondary-bg-color);
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        h2 { margin: 0; font-size: 18px; font-weight: 600; }
+
+        /* Контент */
+        #content { padding: 10px; padding-bottom: 120px; }
+        
+        .item {
+            display: flex; align-items: center;
+            padding: 12px 15px; margin-bottom: 8px;
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px; cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .item:active { transform: scale(0.98); background: rgba(0,0,0,0.05); }
+        .item-icon { font-size: 22px; margin-right: 15px; }
+        .item-info { display: flex; flex-direction: column; }
+        .item-name { font-weight: 500; font-size: 15px; }
+        .item-type { font-size: 12px; color: var(--tg-theme-hint-color); }
+
+        /* Навигация */
+        .back-btn {
+            padding: 10px 15px; color: var(--tg-theme-button-color);
+            font-weight: 500; cursor: pointer; display: flex; align-items: center;
+        }
+
+        /* Плеер внизу */
         #player-container {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--tg-theme-bg-color);
-            border-top: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             padding: 15px; display: none; flex-direction: column;
+            border-radius: 20px 20px 0 0;
+            z-index: 100;
         }
-        audio { width: 100%; margin-top: 10px; }
-        .close-player { align-self: flex-end; cursor: pointer; color: var(--tg-theme-button-color); font-weight: bold; }
+        #now-playing { font-size: 14px; font-weight: 600; margin-bottom: 10px; text-align: center; }
+        audio { width: 100%; height: 40px; }
+        .close-player { 
+            position: absolute; right: 15px; top: 10px; 
+            font-size: 20px; color: var(--tg-theme-hint-color); cursor: pointer; 
+        }
 
-        /* Кнопка загрузки */
-        #upload-section {
-            width: 100%; max-width: 400px;
-            margin-bottom: 20px; padding: 15px;
+        /* Секция администратора (скрыта по умолчанию) */
+        #admin-upload {
+            display: none;
+            margin: 10px; padding: 15px;
             border: 2px dashed var(--tg-theme-button-color);
             border-radius: 12px; text-align: center;
+            background: rgba(36, 129, 204, 0.05);
         }
         #file-input { display: none; }
-        .upload-label {
-            color: var(--tg-theme-button-color);
-            cursor: pointer; font-weight: bold; display: block;
-        }
-        #status { font-size: 12px; margin-top: 8px; color: #666; }
-
-        .back-btn {
-            align-self: flex-start; margin-bottom: 15px;
-            color: var(--tg-theme-button-color); cursor: pointer;
-        }
+        .upload-label { color: var(--tg-theme-button-color); cursor: pointer; font-weight: bold; }
+        #status { font-size: 11px; margin-top: 5px; color: var(--tg-theme-hint-color); }
     </style>
 </head>
 <body>
 
-    <h2 id="folder-title">Vaishnava Lectoriya</h2>
-
-    <div id="upload-section">
-        <label for="file-input" class="upload-label">
-            ➕ Нажмите здесь, чтобы загрузить файл <br>
-            <span style="font-size: 11px; font-weight: normal;">(Любой размер, без ограничений Telegram)</span>
-        </label>
-        <input type="file" id="file-input" accept="audio/*">
-        <div id="status">Выберите папку, затем файл</div>
+    <div class="header">
+        <h2 id="folder-title">Лекторий</h2>
     </div>
 
-    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">⬅ Назад к папкам</div>
+    <div id="back-container" class="back-btn" style="display: none;" onclick="loadFolders()">
+        ⬅ Назад к папкам
+    </div>
+
+    <div id="admin-upload">
+        <label for="file-input" class="upload-label">➕ Загрузить новую лекцию</label>
+        <input type="file" id="file-input" accept="audio/*">
+        <div id="status">Выберите файл</div>
+    </div>
 
     <div id="content">Загрузка...</div>
 
     <div id="player-container">
-        <div class="close-player" onclick="closePlayer()">Закрыть ✖</div>
-        <div id="now-playing" style="font-weight: bold; font-size: 14px;"></div>
+        <div class="close-player" onclick="closePlayer()">×</div>
+        <div id="now-playing"></div>
         <audio id="audio-player" controls controlsList="nodownload"></audio>
     </div>
 
@@ -96,42 +117,54 @@
         
         let currentFolderId = null;
 
-        // 1. ЗАГРУЗКА ПАПОК
+        // Проверка режима администратора через URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === 'true') {
+            document.getElementById('admin-upload').style.display = 'block';
+        }
+
         async function loadFolders() {
             currentFolderId = null;
             document.getElementById('back-container').style.display = 'none';
-            document.getElementById('folder-title').innerText = "Ваши папки";
-            document.getElementById('status').innerText = "Сначала выберите папку для загрузки";
-            
+            document.getElementById('folder-title').innerText = "Лекторий";
             const res = await fetch(`${SUPABASE_URL}/rest/v1/items?type=eq.folder&parent_id=eq.${ROOT_ID}`, {
                 headers: { 'apikey': SUPABASE_KEY }
             });
             const data = await res.json();
-            renderItems(data, true);
+            renderItems(data);
         }
 
-        // 2. ЗАГРУЗКА ФАЙЛОВ В ПАПКЕ
         async function loadFiles(folderId, folderName) {
             currentFolderId = folderId;
-            document.getElementById('back-container').style.display = 'block';
+            document.getElementById('back-container').style.display = 'flex';
             document.getElementById('folder-title').innerText = folderName;
-            document.getElementById('status').innerText = `Готов к загрузке в "${folderName}"`;
-
             const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${folderId}`, {
                 headers: { 'apikey': SUPABASE_KEY }
             });
             const data = await res.json();
-            renderItems(data, false);
+            renderItems(data);
         }
 
-        function renderItems(items, isFolderList) {
+        function renderItems(items) {
             const container = document.getElementById('content');
             container.innerHTML = '';
+            
+            // Сортировка: сначала папки, потом файлы
+            items.sort((a, b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
+
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'item';
-                const icon = item.type === 'folder' ? '📁' : '🎵';
-                div.innerHTML = `<span class="item-icon">${icon}</span><span class="item-name">${item.name}</span>`;
+                const icon = item.type === 'folder' ? '📁' : '🎧';
+                const subText = item.type === 'folder' ? 'Папка' : 'Аудиолекция';
+                
+                div.innerHTML = `
+                    <div class="item-icon">${icon}</div>
+                    <div class="item-info">
+                        <span class="item-name">${item.name}</span>
+                        <span class="item-type">${subText}</span>
+                    </div>
+                `;
                 
                 div.onclick = () => {
                     if (item.type === 'folder') {
@@ -144,7 +177,6 @@
             });
         }
 
-        // 3. ПЛЕЕР
         function playAudio(url, name) {
             const container = document.getElementById('player-container');
             const player = document.getElementById('audio-player');
@@ -155,65 +187,36 @@
         }
 
         function closePlayer() {
-            const player = document.getElementById('audio-player');
-            player.pause();
+            document.getElementById('audio-player').pause();
             document.getElementById('player-container').style.display = 'none';
         }
 
-        // 4. ЗАГРУЗКА ФАЙЛА (Вариант А)
+        // Загрузка для админа
         document.getElementById('file-input').onchange = async (e) => {
             const file = e.target.files[0];
-            if (!file) return;
-
-            if (!currentFolderId) {
-                alert("Пожалуйста, сначала выберите папку!");
-                return;
-            }
+            if (!file || !currentFolderId) return;
 
             const status = document.getElementById('status');
-            status.innerText = "⏳ Загрузка файла... Пожалуйста, подождите.";
+            status.innerText = "⏳ Загрузка...";
             
-            const fileName = `${Date.now()}_${file.name}`;
-            const filePath = `audio-files/${fileName}`;
-
             try {
-                // А. Загружаем в Storage
-                const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${filePath}`, {
+                const path = `audio-files/${Date.now()}_${file.name}`;
+                await fetch(`${SUPABASE_URL}/storage/v1/object/${path}`, {
                     method: 'POST',
-                    headers: { 
-                        'apikey': SUPABASE_KEY, 
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': file.type 
-                    },
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': file.type },
                     body: file
                 });
 
-                if (!uploadRes.ok) throw new Error("Ошибка Storage");
-
-                // Б. Записываем в базу
-                const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${filePath}`;
-                const dbRes = await fetch(`${SUPABASE_URL}/rest/v1/items`, {
+                await fetch(`${SUPABASE_URL}/rest/v1/items`, {
                     method: 'POST',
-                    headers: { 
-                        'apikey': SUPABASE_KEY, 
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: file.name,
-                        type: 'file',
-                        url: publicUrl,
-                        parent_id: currentFolderId
-                    })
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: file.name, type: 'file', url: `${SUPABASE_URL}/storage/v1/object/public/${path}`, parent_id: currentFolderId })
                 });
 
-                if (!dbRes.ok) throw new Error("Ошибка базы данных");
-
-                status.innerText = "✅ Успешно загружено!";
-                loadFiles(currentFolderId, document.getElementById('folder-title').innerText); // Обновить список
+                status.innerText = "✅ Готово";
+                loadFiles(currentFolderId, document.getElementById('folder-title').innerText);
             } catch (err) {
-                console.error(err);
-                status.innerText = "❌ Ошибка загрузки. Попробуйте снова.";
+                status.innerText = "❌ Ошибка";
             }
         };
 
