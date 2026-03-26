@@ -40,7 +40,11 @@
         .item.type-file { grid-column: span 2; display: flex; align-items: center; text-align: left; padding: 12px; }
         .item-icon { font-size: 28px; margin-bottom: 5px; }
         .item.type-file .item-icon { margin: 0 15px 0 0; font-size: 20px; }
-        .item-name { font-size: 14px; word-break: break-word; }
+        .item-name { font-size: 14px; word-break: break-word; flex-grow: 1; }
+
+        /* Стиль для галочки прослушано */
+        .done-mark { color: #4CAF50; font-weight: bold; margin-left: 10px; font-size: 18px; }
+        .item.is-done { border: 1px solid rgba(76, 175, 80, 0.4); background: rgba(76, 175, 80, 0.1); }
 
         .del-btn {
             position: absolute; top: 5px; right: 10px; 
@@ -122,38 +126,33 @@
         const audio = document.getElementById('main-audio');
         const prog = document.getElementById('progress-bar');
         
-        // Храним историю папок для корректной работы кнопки "Назад"
         let folderHistory = []; 
         let currentFolderId = null;
+        let currentFileId = null;
+
+        // Функции для локального хранения (прогресс и галочки)
+        const saveProgress = (id, time) => localStorage.setItem(`pos_${id}`, time);
+        const getProgress = (id) => parseFloat(localStorage.getItem(`pos_${id}`)) || 0;
+        const markDone = (id) => localStorage.setItem(`done_${id}`, 'true');
+        const isDone = (id) => localStorage.getItem(`done_${id}`) === 'true';
 
         async function loadContent(folderId, addToHistory = true) {
             try {
-                if (addToHistory && currentFolderId !== null) {
-                    folderHistory.push(currentFolderId);
-                }
+                if (addToHistory && currentFolderId !== null) folderHistory.push(currentFolderId);
                 currentFolderId = folderId;
-
-                // Показываем кнопку назад, если мы не в корне
                 document.getElementById('back-container').style.display = folderId === ROOT_ID ? 'none' : 'block';
-                // Кнопка загрузки файлов видна только внутри папок (не в корне)
                 document.getElementById('upload-btn').style.display = folderId === ROOT_ID ? 'none' : 'block';
 
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${folderId}&select=*`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
                 render(await res.json());
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         function goBack() {
-            if (folderHistory.length > 0) {
-                const prevFolder = folderHistory.pop();
-                loadContent(prevFolder, false);
-            } else {
-                loadContent(ROOT_ID, false);
-            }
+            const prevFolder = folderHistory.pop();
+            loadContent(prevFolder || ROOT_ID, false);
         }
 
         function render(items) {
@@ -163,8 +162,14 @@
 
             items.forEach(item => {
                 const div = document.createElement('div');
-                div.className = `item type-${item.type}`;
-                div.innerHTML = `<div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div><div class="item-name">${item.name}</div>`;
+                const done = isDone(item.id);
+                // Добавляем класс is-done, если файл прослушан
+                div.className = `item type-${item.type} ${done ? 'is-done' : ''}`;
+                
+                div.innerHTML = `
+                    <div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div>
+                    <div class="item-name" data-id="${item.id}">${item.name} ${done ? '<span class="done-mark">✓</span>' : ''}</div>
+                `;
                 
                 if (isAdmin) {
                     const del = document.createElement('div');
@@ -174,7 +179,7 @@
                     div.appendChild(del);
                 }
 
-                div.onclick = () => item.type === 'folder' ? loadContent(item.id) : play(item.url, item.name);
+                div.onclick = () => item.type === 'folder' ? loadContent(item.id) : play(item.url, item.name, item.id);
                 container.appendChild(div);
             });
         }
@@ -195,13 +200,25 @@
             return `${m}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
-        function play(url, name) {
+        function play(url, name, id) {
+            currentFileId = id;
             document.getElementById('now-playing').innerText = name;
             audio.src = url;
             document.getElementById('player-container').style.display = 'flex';
             audio.play();
             document.getElementById('play-pause').innerText = '⏸';
         }
+
+        // Ждем, пока загрузятся данные аудиофайла, чтобы безопасно перемотать
+        audio.onloadedmetadata = () => {
+            if (currentFileId) {
+                const savedTime = getProgress(currentFileId);
+                // Если файл прослушан меньше чем на 95%, продолжаем с того же места
+                if (savedTime > 0 && savedTime < audio.duration * 0.95) {
+                    audio.currentTime = savedTime;
+                }
+            }
+        };
 
         function togglePlay() {
             if (audio.paused) { audio.play(); document.getElementById('play-pause').innerText = '⏸'; }
@@ -215,8 +232,33 @@
             prog.max = audio.duration || 0;
             prog.value = audio.currentTime;
             document.getElementById('current-time').innerText = formatTime(audio.currentTime);
-            if (audio.duration) document.getElementById('duration-time').innerText = formatTime(audio.duration);
+            
+            if (audio.duration) {
+                document.getElementById('duration-time').innerText = formatTime(audio.duration);
+                
+                // Сохраняем прогресс (только если прошло больше 1 сек)
+                if (currentFileId && audio.currentTime > 1) {
+                    saveProgress(currentFileId, audio.currentTime);
+                }
+                
+                // Если прослушано более 95% и галочка еще не стоит
+                if ((audio.currentTime / audio.duration > 0.95) && !isDone(currentFileId)) {
+                    markDone(currentFileId);
+                    
+                    // Мгновенно зажигаем галочку на экране без перезагрузки папки
+                    const nameElements = document.querySelectorAll('.item-name');
+                    nameElements.forEach(el => {
+                        if (el.getAttribute('data-id') === currentFileId) {
+                            el.parentElement.classList.add('is-done');
+                            if (!el.innerHTML.includes('done-mark')) {
+                                el.innerHTML += ' <span class="done-mark">✓</span>';
+                            }
+                        }
+                    });
+                }
+            }
         };
+
         prog.oninput = () => { audio.currentTime = prog.value; };
 
         async function createNewFolder() {
@@ -253,7 +295,6 @@
             loadContent(currentFolderId, false);
         };
 
-        // Запуск с корня
         loadContent(ROOT_ID, false);
     </script>
 </body>
