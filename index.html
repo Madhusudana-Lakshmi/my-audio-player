@@ -45,11 +45,12 @@
     }
 
         #content {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            padding: 100px 12px 200px 12px; /* 100px сверху — это запас под шапку */
-        }
+        display: grid !important; /* Гарантируем, что это сетка */
+        grid-template-columns: repeat(3, 1fr) !important; /* Строго 3 колонки */
+        gap: 15px; /* Расстояние между папками */
+        padding: 110px 10px 200px 10px; /* Отступы: сверху 110 (под шапку), по бокам 10 */
+        box-sizing: border-box; /* Чтобы отступы не распирали экран */
+    }
 
         /* ОСНОВНОЙ СТИЛЬ ПЛИТКИ */
         .item {
