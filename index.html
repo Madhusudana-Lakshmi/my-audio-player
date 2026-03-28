@@ -20,21 +20,29 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
             min-height: 100vh;
         }
 
-      .header {
-        position: fixed !important;
-        top: 3px !important;
-        left: 10px !important;
-        right: 10px !important;
-        width: auto !important;
-        z-index: 1000;
-        height: 100px;
-        border-radius: 20px 20px 0 0 !important;
-        
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
+    .header {
+    position: fixed !important;
+    top: 10px !important; /* Небольшой отступ от самого верха экрана */
+    
+    /* ЦЕНТРОВКА И ШИРИНА */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 92% !important;
+    max-width: 600px !important; /* Такая же ширина, как у контента */
+    
+    /* СТИЛЬ МАТОВОГО ОСТРОВКА */
+    background: rgba(20, 20, 20, 0.7) !important;
+    backdrop-filter: blur(15px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(160%);
+    
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 25px !important; /* Скругление под стиль плеера */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    z-index: 3000 !important; /* Шапка должна быть выше всего */
+    padding: 10px 20px !important;
+    box-sizing: border-box;
+}
 
  #content {
     /* ЦЕНТРОВКА И ОСТРОВОК */
