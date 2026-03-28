@@ -293,24 +293,32 @@
             }
         };
         // Управление кнопками телефона (MediaSession)
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', () => { audio.play(); document.getElementById('play-pause').innerText = '⏸'; });
-            navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); document.getElementById('play-pause').innerText = '▶️'; });
-            navigator.mediaSession.setActionHandler('nexttrack', () => {
-                const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
-                if (currentIndex !== -1 && currentIndex < currentFilesList.length - 1) {
-                    const nextFile = currentFilesList[currentIndex + 1];
-                    play(nextFile.url, nextFile.name, nextFile.id);
-                }
-            });
-            navigator.mediaSession.setActionHandler('previoustrack', () => {
-                const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
-                if (currentIndex > 0) {
-                    const prevFile = currentFilesList[currentIndex - 1];
-                    play(prevFile.url, prevFile.name, prevFile.id);
-                }
-            });
+       if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => { 
+        audio.play(); 
+        navigator.mediaSession.playbackState = "playing";
+        document.getElementById('play-pause').innerText = '⏸'; 
+    });
+    navigator.mediaSession.setActionHandler('pause', () => { 
+        audio.pause(); 
+        navigator.mediaSession.playbackState = "paused";
+        document.getElementById('play-pause').innerText = '▶️'; 
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
+        if (currentIndex !== -1 && currentIndex < currentFilesList.length - 1) {
+            const nextFile = currentFilesList[currentIndex + 1];
+            play(nextFile.url, nextFile.name, nextFile.id);
         }
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+        const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
+        if (currentIndex > 0) {
+            const prevFile = currentFilesList[currentIndex - 1];
+            play(prevFile.url, prevFile.name, prevFile.id);
+        }
+    });
+}
 
         async function createNewFolder() {
             const n = prompt("Имя папки:");
