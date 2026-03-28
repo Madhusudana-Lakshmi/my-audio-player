@@ -57,7 +57,10 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
         height: 140px;
         min-width: 0 !important; /* Позволяет папкам сжиматься в сетку */
         width: 100% !important;
-        background: rgba(255, 255, 255, 0.03) !important; /* Еще прозрачнее */
+        background-color: rgba(255, 255, 255, 0.05) !important; /* Легкий стеклянный оттенок */
+    background-position: center !important; /* Картинка всегда по центру */
+    background-size: cover !important; /* Картинка заполняет всю папку */
+    background-repeat: no-repeat !important; /* Еще прозрачнее */
     backdrop-filter: blur(12px) !important; /* Размытие сильнее — эффект станет «дороже» */
         cursor: pointer;
     transition: transform 0.1s ease-out, background 0.2s;
