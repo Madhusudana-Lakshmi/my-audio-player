@@ -371,15 +371,15 @@ if (isAdmin) {
                     del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
                     div.appendChild(del);
                     
-                    // Кнопка переименования
-                const edit = document.createElement('div');
-                edit.style = "position: absolute; top: 5px; left: 10px; color: #ffcc00; font-size: 20px; cursor: pointer; z-index: 10;";
-                edit.innerHTML = '✎';
-                edit.onclick = (e) => { 
-                    e.stopPropagation(); 
-                    renameFolder(item.id, item.name); 
-                };
-                div.appendChild(edit);
+                // Кнопка переименования
+const edit = document.createElement('div');
+edit.className = 'edit-btn'; // МЫ ЗАМЕНИЛИ ЭТУ СТРОКУ (убрали длинный .style)
+edit.innerHTML = '✎';
+edit.onclick = (e) => {
+    e.stopPropagation();
+    renameFolder(item.id, item.name);
+};
+div.appendChild(edit);
 
                     if (item.type === 'folder') {
                         const cover = document.createElement('div');
