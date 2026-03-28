@@ -119,7 +119,18 @@ width: calc(100% - 20px); /* Чтобы шапка не вылезала за э
         .btn-play { width: 70px; height: 70px; border-radius: 50%; background: var(--tg-theme-button-color); border: none; font-size: 30px; color: #fff; }
         
         #progress-bar { width: 90%; margin: 0 auto 10px; height: 10px; accent-color: var(--tg-theme-button-color); }
-        .back-btn { padding: 15px; color: var(--tg-theme-button-color); font-weight: bold; cursor: pointer; }
+       .back-btn {
+    position: fixed; /* Закрепляем её */
+    top: 25px;       /* Опускаем внутрь шапки */
+    left: 20px;      /* Отступ слева */
+    z-index: 1100;   /* Ставим ВЫШЕ шапки (у шапки 1000) */
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.6); /* Темная подложка, чтобы текст «Назад» читался */
+    color: #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    backdrop-filter: blur(5px); /* Красивое размытие под кнопкой */
+}
         
         #admin-panel { display: none; padding: 10px; background: rgba(0,0,0,0.5); flex-direction: column; align-items: center; gap: 10px; }
         .admin-buttons { display: flex; gap: 10px; }
