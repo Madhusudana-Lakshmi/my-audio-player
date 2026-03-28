@@ -59,10 +59,12 @@
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(5px);
         cursor: pointer;
+    transition: transform 0.1s ease-out, background 0.2s;
     }
-        .item:active {
-    transform: scale(0.90); /* Папка немного уменьшится при нажатии */
-    transition: transform 0.3s ease;
+       .item:active {
+    transform: scale(0.90) !important;
+    background: rgba(255, 255, 255, 0.2) !important; /* Вспышка при клике */
+    transition: transform 0s; /* Сжатие должно быть мгновенным */
 }
 
         /* НАЗВАНИЕ ВНИЗУ */
