@@ -37,15 +37,26 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
     }
 
   #content {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr 1fr !important; /* Ровно 3 колонки */
-        gap: 8px !important;
-        padding: 110px 10px 200px 10px !important; /* 110px сверху, чтобы не залезло под шапку */
-        box-sizing: border-box !important;
-        width: 100% !important;
-        max-width: 100vw;
-        overflow-x: hidden;
-    }
+    /* ЦЕНТРОВКА */
+    margin: 20px auto !important; /* Центрируем блок и даем отступ сверху */
+    width: 92% !important;        /* На мобилках почти во всю ширину */
+    max-width: 600px !important;  /* На компьютере не шире 600px */
+    
+    /* СТИЛЬ ОСТРОВА (МАТОВОЕ СТЕКЛО) */
+    background: rgba(255, 255, 255, 0.03) !important; /* Едва заметный белый налет */
+    backdrop-filter: blur(10px) !important;           /* Легкое размытие под папками */
+    -webkit-backdrop-filter: blur(10px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Тонкая рамка */
+    border-radius: 30px !important;                       /* Скругляем края */
+    
+    /* ВНУТРЕННИЕ ОТСТУПЫ */
+    padding: 20px !important;
+    padding-bottom: 180px !important; /* Место снизу, чтобы плеер не перекрывал папки */
+    
+    box-sizing: border-box;
+    min-height: 80vh; /* Чтобы остров не был коротким, если папок мало */
+}
 .item {
         border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -118,7 +129,7 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
     /* ЦЕНТРОВКА */
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 94% !important; 
+    width: 95% !important; 
     max-width: 450px !important; 
     
     /* СТИЛЬ "ОСТРОВКА" */
@@ -131,7 +142,7 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
     
     z-index: 2000 !important;
-    padding: 10px 15px !important;
+    padding: 8px 13px !important;
     box-sizing: border-box;
     display: none; 
     flex-direction: column;
