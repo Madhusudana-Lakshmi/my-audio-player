@@ -44,12 +44,13 @@
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
-        #content {
-        display: grid !important; /* Гарантируем, что это сетка */
-        grid-template-columns: repeat(3, 1fr) !important; /* Строго 3 колонки */
-        gap: 15px; /* Расстояние между папками */
-        padding: 110px 10px 200px 10px; /* Отступы: сверху 110 (под шапку), по бокам 10 */
-        box-sizing: border-box; /* Чтобы отступы не распирали экран */
+       #content {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important; /* Прямое указание трех колонок */
+        gap: 10px !important;
+        padding: 110px 10px 200px 10px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
     }
 
         /* ОСНОВНОЙ СТИЛЬ ПЛИТКИ */
