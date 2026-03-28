@@ -111,16 +111,28 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
             padding: 5px; cursor: pointer; z-index: 10;
         }
 
-      .player-container {
-    position: fixed;
-    bottom: 15px !important; /* Отступ от нижнего края экрана */
-    left: 10px !important;   /* Отступ слева */
-    right: 10px !important;  /* Отступ справа */
-    width: calc(100% - 20px) !important; /* Ширина с учетом отступов */
+    .player-container {
+    position: fixed !important; /* ФИКСИРУЕМ на экране */
+    bottom: 20px !important;    /* Отступ от нижнего края экрана */
+    left: 15px !important;      /* Отступ слева */
+    right: 15px !important;     /* Отступ справа */
+    width: calc(100% - 30px) !important; /* Ширина с учетом отступов */
     
-    /* Скругления со всех сторон */
-    border-radius: 20px !important; 
+    /* Полное скругление для эффекта "пилюли" или островка */
+    border-radius: 30px !important; 
     
+    /* Остальные стили оставляем как есть или чуть усиливаем */
+    background: rgba(10, 10, 10, 0.9) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    
+    z-index: 2000 !important;   /* Чтобы плеер всегда был выше всех папок */
+    padding: 20px 15px !important;
+    box-sizing: border-box;
+    display: none;              /* Появится только при нажатии на файл */
+    flex-direction: column;
+}
     /* Эффект парения */
     background: rgba(0, 0, 0, 0.85) !important; /* Полупрозрачный фон */
     backdrop-filter: blur(15px); /* Размытие за плеером */
