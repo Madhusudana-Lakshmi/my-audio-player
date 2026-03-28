@@ -240,16 +240,22 @@
             }
         };
 
-        function togglePlay() {
+       function togglePlay() {
             if (audio.paused) { 
-                audio.play(); 
-                document.getElementById('play-pause').innerText = '⏸';
-                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
+                // Важно: принудительно активируем сессию при каждом нажатии
+                audio.play().then(() => {
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.playbackState = "playing";
+                    }
+                });
+                document.getElementById('play-pause').innerText = '⏸'; 
             }
             else { 
                 audio.pause(); 
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.playbackState = "paused";
+                }
                 document.getElementById('play-pause').innerText = '▶'; 
-                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
             }
         }
 
