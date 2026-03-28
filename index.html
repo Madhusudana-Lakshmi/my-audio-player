@@ -169,6 +169,32 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
     backdrop-filter: blur(8px);
     transition: all 0.2s ease;
 }
+        /* КНОПКА УДАЛЕНИЯ (Крестик) */
+.del-btn {
+    position: absolute;
+    top: 5px !important;
+    right: 5px !important;
+    width: 30px !important;
+    height: 30px !important;
+    background: rgba(255, 0, 0, 0.8) !important; /* Ярко-красный фон */
+    color: white !important;
+    border-radius: 50% !important; /* Круглая кнопка */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    cursor: pointer;
+    z-index: 150 !important; /* Выше всех остальных элементов */
+    border: 2px solid white !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease;
+}
+
+.del-btn:hover {
+    background: red !important;
+    transform: scale(1.2); /* Увеличивается при наведении */
+}
         .cover-btn {
     position: absolute;
     bottom: 8px !important;
