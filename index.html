@@ -111,36 +111,30 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
             padding: 5px; cursor: pointer; z-index: 10;
         }
 
-   #player-container {
-    position: fixed !important; /* Плеер всегда на месте, даже при скролле */
-    bottom: 15px !important;    /* Отступ от нижнего края (для эффекта островка) */
+  #player-container {
+    position: fixed !important;
+    bottom: 20px !important; 
+    
+    /* ЦЕНТРОВКА */
     left: 50% !important;
-    transform: translateX(-50%) !important; /* Магия центровки */
-    width: 90% !important; /* Занимает 90% ширины на мобилках */
-    max-width: 400px !important; /* Но не больше 400px на компьютерах */
+    transform: translateX(-50%) !important;
+    width: 92% !important; 
+    max-width: 450px !important; 
     
-    /* ... остальные твои стили ... */
-}
+    /* СТИЛЬ "ОСТРОВКА" */
+    background: rgba(20, 20, 20, 0.75) !important;
+    backdrop-filter: blur(18px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
     
-    /* Оформление "Островка" */
-    background: rgba(0, 0, 0, 0.9) !important; 
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 20px !important; /* Скругления со всех сторон */
-    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.12) !important; 
+    border-radius: 30px !important; 
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
     
-    z-index: 2000 !important; /* Чтобы он всегда был ПОВЕРХ папок */
-    padding: 12px;
+    z-index: 2000 !important;
+    padding: 15px 20px !important;
     box-sizing: border-box;
-    display: none;              /* Появится только при нажатии на файл */
+    display: none; 
     flex-direction: column;
-}
-    /* Эффект парения */
-    background: rgba(0, 0, 0, 0.85) !important; /* Полупрозрачный фон */
-    backdrop-filter: blur(15px); /* Размытие за плеером */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Тонкая рамка */
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5); /* Тень, чтобы он "парил" над контентом */
-    
     z-index: 1000;
     padding: 10px;
     box-sizing: border-box;
