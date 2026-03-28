@@ -20,17 +20,30 @@
         }
 
        .header {
-            padding: 30px 15px; /* Увеличили отступы, чтобы картинку было видно */
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+        position: fixed; /* Фиксируем наверху */
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000; /* Чтобы была поверх папок */
+        height: 80px; /* Фиксируем высоту здесь */
+        
+        /* Скругление нижних углов */
+        border-radius: 0 0 20px 20px; 
+        
+        /* Настройки картинки */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        
+        /* Тень, чтобы шапка отделялась от папок при скролле */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
 
         #content {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            padding: 12px;
-            padding-bottom: 200px;
+            padding: 100px 12px 200px 12px; /* 100px сверху — это запас под шапку */
         }
 
         /* ОСНОВНОЙ СТИЛЬ ПЛИТКИ */
@@ -129,7 +142,7 @@
         <input type="file" id="file-input" multiple style="display:none">
     </div>
 
-    <div class="header" style="height: 10px; background-image: url('https://sfwlfdxwqnrvypaifayi.supabase.co/storage/v1/object/public/folder-covers/folder-covers/9df9265e-e228-425b-b721-fa1b256952b6.jpg'); background-size: cover; background-position: center;"></div>
+    <div class="header" style="background-image: url('https://sfwlfdxwqnrvypaifayi.supabase.co/storage/v1/object/public/folder-covers/folder-covers/9df9265e-e228-425b-b721-fa1b256952b6.jpg');"></div>
     <div id="back-container" class="back-btn" style="display: none;" onclick="goBack()">⬅ Назад</div>
     <div id="content">Загрузка...</div>
 
