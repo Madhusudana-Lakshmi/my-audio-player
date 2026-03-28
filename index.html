@@ -168,6 +168,7 @@
             const container = document.getElementById('content');
             container.innerHTML = '';
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
+            currentFilesList = items.filter(i => i.type === 'file');
 
             items.forEach(item => {
                 const div = document.createElement('div');
@@ -212,6 +213,10 @@
         function play(url, name, id) {
             currentFileId = id;
             document.getElementById('now-playing').innerText = name;
+            // Убираем подсветку со всех элементов и добавляем текущему
+            document.querySelectorAll('.item').forEach(el => el.classList.remove('is-playing'));
+            const currentEl = document.querySelector(`.item-name[data-id="${id}"]`);
+            if (currentEl) currentEl.parentElement.classList.add('is-playing');
             audio.src = url;
             document.getElementById('player-container').style.display = 'flex';
             audio.play();
@@ -269,6 +274,16 @@
         };
 
         prog.oninput = () => { audio.currentTime = prog.value; };
+        // Автопереключение на следующий трек
+        audio.onended = () => {
+            const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
+            if (currentIndex !== -1 && currentIndex < currentFilesList.length - 1) {
+                const nextFile = currentFilesList[currentIndex + 1];
+                play(nextFile.url, nextFile.name, nextFile.id);
+            } else {
+                stopPlayer(); 
+            }
+        };
 
         async function createNewFolder() {
             const n = prompt("Имя папки:");
