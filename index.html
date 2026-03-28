@@ -62,13 +62,14 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
     background-size: cover !important; /* Картинка заполняет всю папку */
     background-repeat: no-repeat !important; /* Еще прозрачнее */
     backdrop-filter: blur(12px) !important; /* Размытие сильнее — эффект станет «дороже» */
+    will-change: transform;
         cursor: pointer;
-    transition: transform 0.1s ease-out, background 0.2s;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
     }
        .item:active {
-    transform: scale(0.90) !important;
-    background: rgba(255, 255, 255, 0.2) !important; /* Вспышка при клике */
-    transition: transform 0s; /* Сжатие должно быть мгновенным */
+   transform: scale(0.95) !important;
+background-color: rgba(255, 255, 255, 0.15) !important;
+transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для мягкости */
 }
 
         /* НАЗВАНИЕ ВНИЗУ */
