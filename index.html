@@ -141,30 +141,37 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
     backdrop-filter: blur(5px); /* Красивое размытие под кнопкой */
 }
         
-        #admin-panel {
+       #admin-panel {
     position: fixed;
-    top: 90px !important; /* Сразу под основной шапкой */
-    /* ... остальные стили ... */
-    left: 10px; 
-    width: calc(100% - 20px); 
-    z-index: 1200; 
-    flex-direction: column; 
-    align-items: center; 
-    gap: 10px; 
-    padding: 10px; 
-    background: rgba(0, 0, 0, 0.8); 
-    border-radius: 15px; 
-    backdrop-filter: blur(10px);
-    box-sizing: border-box; }
+    top: 95px !important; /* Сразу под шапкой */
+    right: 15px; /* Прижмем к правому краю */
+    display: flex;
+    flex-direction: row; /* Кнопки в ряд */
+    gap: 8px;
+    z-index: 1200;
+    background: none !important; /* Убираем черную плашку */
+    backdrop-filter: none !important; /* Убираем размытие фона */
+    border: none !important;
+    width: auto !important; /* Панель больше не на весь экран */
+}
         
         .admin-buttons { display: flex; gap: 10px; }
-        .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;}
-        #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; }
-        .cover-btn { 
-            position: absolute; bottom: 5px; right: 10px; 
-            color: rgba(255,255,255,0.7); font-size: 14px; 
-            padding: 5px; cursor: pointer; z-index: 10; 
-            opacity: 0.8; 
+        .admin-btn {
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    padding: 8px 15px !important;
+    border-radius: 20px !important; /* Закругленные края */
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.admin-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
         }
     </style>
 </head>
