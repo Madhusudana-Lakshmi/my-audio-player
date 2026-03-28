@@ -217,6 +217,14 @@
             document.querySelectorAll('.item').forEach(el => el.classList.remove('is-playing'));
             const currentEl = document.querySelector(`.item-name[data-id="${id}"]`);
             if (currentEl) currentEl.parentElement.classList.add('is-playing');
+            // Передаем данные на заблокированный экран
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: name,
+                    artist: 'Лекторий',
+                    artwork: [{ src: 'icon.png', sizes: '512x512', type: 'image/png' }]
+                });
+            }
             audio.src = url;
             document.getElementById('player-container').style.display = 'flex';
             audio.play();
@@ -284,6 +292,25 @@
                 stopPlayer(); 
             }
         };
+        // Управление кнопками телефона (MediaSession)
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', () => { audio.play(); document.getElementById('play-pause').innerText = '⏸'; });
+            navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); document.getElementById('play-pause').innerText = '▶️'; });
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
+                if (currentIndex !== -1 && currentIndex < currentFilesList.length - 1) {
+                    const nextFile = currentFilesList[currentIndex + 1];
+                    play(nextFile.url, nextFile.name, nextFile.id);
+                }
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
+                if (currentIndex > 0) {
+                    const prevFile = currentFilesList[currentIndex - 1];
+                    play(prevFile.url, prevFile.name, prevFile.id);
+                }
+            });
+        }
 
         async function createNewFolder() {
             const n = prompt("Имя папки:");
