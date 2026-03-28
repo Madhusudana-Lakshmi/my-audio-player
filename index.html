@@ -36,26 +36,25 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
-  #content {
-    /* ЦЕНТРОВКА */
-    margin: 20px auto !important; /* Центрируем блок и даем отступ сверху */
-    width: 92% !important;        /* На мобилках почти во всю ширину */
-    max-width: 600px !important;  /* На компьютере не шире 600px */
-    
-    /* СТИЛЬ ОСТРОВА (МАТОВОЕ СТЕКЛО) */
-    background: rgba(255, 255, 255, 0.03) !important; /* Едва заметный белый налет */
-    backdrop-filter: blur(10px) !important;           /* Легкое размытие под папками */
+ #content {
+    /* ЦЕНТРОВКА И ОСТРОВОК */
+    margin: 20px auto !important;
+    width: 92% !important;
+    max-width: 600px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px);
-    
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Тонкая рамка */
-    border-radius: 30px !important;                       /* Скругляем края */
-    
-    /* ВНУТРЕННИЕ ОТСТУПЫ */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 30px !important;
     padding: 20px !important;
-    padding-bottom: 180px !important; /* Место снизу, чтобы плеер не перекрывал папки */
-    
+    padding-bottom: 220px !important; /* Увеличил, чтобы "остров" плеера не мешал */
     box-sizing: border-box;
-    min-height: 80vh; /* Чтобы остров не был коротким, если папок мало */
+    min-height: 85vh;
+
+    /* ВОЗВРАЩАЕМ 3 ПАПКИ В РЯД */
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important; 
+    gap: 12px !important; /* Расстояние между плитками */
 }
 .item {
         border-radius: 12px;
