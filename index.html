@@ -31,7 +31,17 @@
             background: rgba(0, 0, 0, 0.7); z-index: -1;
         }
 
-        .header { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+       .header {
+            padding: 30px 15px; /* Увеличили отступы, чтобы картинку было видно */
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            
+            /* Ставим твою картинку фоном */
+            background-image: url('ТВОЯ_ПРЯМАЯ_ССЫЛКА_НА_ИЗОБРАЖЕНИЕ');
+            background-size: cover; /* Картинка растягивается во всю ширину */
+            background-position: center; /* Центрируется */
+            position: relative; /* Чтобы текст был ПОВЕРХ картинки */
+        }
 
         #content {
             display: grid;
@@ -137,7 +147,7 @@
         <input type="file" id="file-input" multiple style="display:none">
     </div>
 
-    <div class="header"><h2>🪷 Лекторий</h2></div>
+    <div class="header" style="height: 120px; background-image: url('ССЫЛКА_НА_КАРТИНКУ'); background-size: cover; background-position: center;"></div>
     <div id="back-container" class="back-btn" style="display: none;" onclick="goBack()">⬅ Назад</div>
     <div id="content">Загрузка...</div>
 
