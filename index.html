@@ -34,36 +34,47 @@
         .header { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         #content { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 250px; }
         
-        .item {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+       .item {
             border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative; /* Обязательно: для позиционирования текста */
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 100%; /* Карточки будут одной высоты в ряду */
+            justify-content: flex-end; /* Текст падает вниз */
+            height: 140px; /* Фиксированная высота плитки на телефоне */
+            background: rgba(255, 255, 255, 0.05); /* Фон по умолчанию */
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: transform 0.1s;
         }
 
-        .folder-cover {
-            width: 100%;
-            height: 100px; /* Фиксируем высоту обложки */
-            object-fit: cover; /* Картинка заполнит блок без растяжения */
-            object-position: top; /* Приоритет верхней части фото */
-            display: block;
-        }
-
+        /* Стиль для текста, который лежит ПОВЕРХ картинки */
         .item-name {
             font-size: 11px;
-            padding: 8px 4px;
-            word-break: break-word;
-            flex-grow: 1; /* Текст занимает оставшееся место */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.2);
+            font-weight: 500;
+            line-height: 1.2;
+            padding: 8px 6px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Тень для текста */
+            z-index: 2; /* Поверх картинки */
+            
+            /* Градиент снизу вверх, чтобы текст читался на любом фоне */
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
+        }
+
+        /* Стандартная иконка для папок без картинок */
+        .item-icon {
+            font-size: 32px;
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.3;
+            z-index: 1;
         }
         .item-type-folder {
             min-height: 140px; /* Задаем минимальную общую высоту карточки */
@@ -225,9 +236,55 @@
             currentFilesList = items.filter(i => i.type === 'file');
 
             items.forEach(item => {
-                const div = document.createElement('div');
-                const done = isDone(item.id);
-                div.className = `item type-${item.type} ${done ? 'is-done' : ''}`;
+            const div = document.createElement('div');
+            div.className = `item item-type-${item.type}`;
+            
+            // ПРОВЕРКА: Если это папка и У НЕЁ ЕСТЬ КАРТИНКА, ставим её фоном
+            if (item.type === 'folder' && item.image_url) {
+                div.style.backgroundImage = `url('${item.image_url}')`;
+                div.style.backgroundSize = 'cover';
+                div.style.backgroundPosition = 'center top'; // Центр по горизонтали, верх по вертикали
+            }
+
+            // Создаем блок для имени папки (он всегда будет внизу)
+            const name = document.createElement('div');
+            name.className = 'item-name';
+            name.innerText = item.name;
+            name.setAttribute('data-id', item.id); // Для пометки "просмотрено"
+
+            // Если картинки нет, добавляем стандартную иконку папки
+            if (!item.image_url || item.type === 'file') {
+                const icon = document.createElement('div');
+                icon.className = 'item-icon';
+                icon.innerHTML = item.type === 'folder' ? '📁' : '🎵';
+                div.appendChild(icon);
+            }
+
+            div.appendChild(name);
+
+            // Кнопки для админа (удалить/изменить обложку)
+            if (isAdmin) {
+                // Кнопка удаления (крестик)
+                const del = document.createElement('div');
+                del.className = 'del-btn';
+                del.innerHTML = '×';
+                del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
+                div.appendChild(del);
+
+                // Кнопка загрузки обложки (картинка)
+                if (item.type === 'folder') {
+                    const cover = document.createElement('div');
+                    cover.className = 'cover-btn';
+                    cover.innerHTML = '🖼';
+                    cover.onclick = (e) => { e.stopPropagation(); uploadFolderCover(item.id); };
+                    div.appendChild(cover);
+                }
+            }
+
+            // Обработка клика
+            div.onclick = () => item.type === 'folder' ? loadContent(item.id) : play(item.url, item.name, item.id);
+            container.appendChild(div);
+        });
                 
                // ПРОВЕРКА: Если это папка И у неё есть картинка
                 if (item.type === 'folder' && item.image_url) {
