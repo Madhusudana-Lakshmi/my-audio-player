@@ -20,26 +20,32 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
             min-height: 100vh;
         }
 
-    .header {
+  .header {
     position: fixed !important;
-    top: 0px !important;
+    top: 10px !important; /* Оставляем зазор сверху для эффекта островка */
+    left: 4% !important;  /* Боковые отступы вместо сложной центровки */
+    right: 4% !important;
     
-    /* УВЕЛИЧИВАЕМ ВЫСОТУ И ОТСТУПЫ */
-    padding: 15px 10px !important; /* Первое число увеличит высоту шапки */
-    min-height: 80px !important;    /* Минимальная высота, чтобы картинка влезла */
+    /* ЦЕНТРОВКА СОДЕРЖИМОГО (КАРТИНКИ) */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    /* РАЗМЕРЫ */
+    min-height: 100px !important; /* Увеличил высоту, чтобы картинка точно влезла */
+    padding: 10px !important;
     
     /* СТИЛЬ */
-    background: rgba(20, 20, 20, 0.6) !important; /* Сделал чуть прозрачнее (0.6) */
+    background: rgba(20, 20, 20, 0.6) !important;
     backdrop-filter: blur(15px) !important;
-    -webkit-backdrop-filter: blur(15px);
-    
+    -webkit-backdrop-filter: blur(15px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 25px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     
     z-index: 3000 !important;
     box-sizing: border-box;
-    overflow: visible !important; /* Чтобы картинка не обрезалась краями */
+    overflow: visible !important;
 }
 
 /* Если внутри шапки есть картинка (логотип), добавим ей правил */
