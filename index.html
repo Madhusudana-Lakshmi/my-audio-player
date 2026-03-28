@@ -132,7 +132,20 @@ width: calc(100% - 40px); /* Чтобы шапка не вылезала за э
     backdrop-filter: blur(5px); /* Красивое размытие под кнопкой */
 }
         
-        #admin-panel { display: none; padding: 10px; background: rgba(0,0,0,0.5); flex-direction: column; align-items: center; gap: 10px; }
+        #admin-panel { display: none; 
+    position: fixed; 
+    top: 100px; 
+    left: 10px; 
+    width: calc(100% - 20px); 
+    z-index: 1200; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
+    padding: 10px; 
+    background: rgba(0, 0, 0, 0.8); 
+    border-radius: 15px; 
+    backdrop-filter: blur(10px);
+    box-sizing: border-box; }
         .admin-buttons { display: flex; gap: 10px; }
         .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;}
         #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; }
