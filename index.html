@@ -60,6 +60,10 @@
         backdrop-filter: blur(5px);
         cursor: pointer;
     }
+        .item:active {
+    transform: scale(0.95); /* Папка немного уменьшится при нажатии */
+    transition: transform 0.1s ease;
+}
 
         /* НАЗВАНИЕ ВНИЗУ */
         .item-name {
