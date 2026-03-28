@@ -229,93 +229,55 @@
             loadContent(prevFolder || ROOT_ID, false);
         }
 
-        function render(items) {
+       function render(items) {
             const container = document.getElementById('content');
             container.innerHTML = '';
+            
+            // Сортировка: папки всегда сверху
             items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
             currentFilesList = items.filter(i => i.type === 'file');
 
             items.forEach(item => {
-            const div = document.createElement('div');
-            div.className = `item item-type-${item.type}`;
-            
-            // ПРОВЕРКА: Если это папка и У НЕЁ ЕСТЬ КАРТИНКА, ставим её фоном
-            if (item.type === 'folder' && item.image_url) {
-                div.style.backgroundImage = `url('${item.image_url}')`;
-                div.style.backgroundSize = 'cover';
-                div.style.backgroundPosition = 'center top'; // Центр по горизонтали, верх по вертикали
-            }
-
-            // Создаем блок для имени папки (он всегда будет внизу)
-            const name = document.createElement('div');
-            name.className = 'item-name';
-            name.innerText = item.name;
-            name.setAttribute('data-id', item.id); // Для пометки "просмотрено"
-
-            // Если картинки нет, добавляем стандартную иконку папки
-            if (!item.image_url || item.type === 'file') {
-                const icon = document.createElement('div');
-                icon.className = 'item-icon';
-                icon.innerHTML = item.type === 'folder' ? '📁' : '🎵';
-                div.appendChild(icon);
-            }
-
-            div.appendChild(name);
-
-            // Кнопки для админа (удалить/изменить обложку)
-            if (isAdmin) {
-                // Кнопка удаления (крестик)
-                const del = document.createElement('div');
-                del.className = 'del-btn';
-                del.innerHTML = '×';
-                del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
-                div.appendChild(del);
-
-                // Кнопка загрузки обложки (картинка)
-                if (item.type === 'folder') {
-                    const cover = document.createElement('div');
-                    cover.className = 'cover-btn';
-                    cover.innerHTML = '🖼';
-                    cover.onclick = (e) => { e.stopPropagation(); uploadFolderCover(item.id); };
-                    div.appendChild(cover);
-                }
-            }
-
-            // Обработка клика
-            div.onclick = () => item.type === 'folder' ? loadContent(item.id) : play(item.url, item.name, item.id);
-            container.appendChild(div);
-        });
+                const div = document.createElement('div');
+                const done = isDone(item.id);
+                div.className = `item item-type-${item.type} ${done ? 'is-done' : ''}`;
                 
-               // ПРОВЕРКА: Если это папка И у неё есть картинка
+                // Ставим картинку фоном для всей плитки папки
                 if (item.type === 'folder' && item.image_url) {
-                    div.innerHTML = `
-                        <img src="${item.image_url}" class="folder-cover">
-                        <div class="item-name" data-id="${item.id}">${item.name}</div>
-                    `;
-                } else {
-                    // Стандартный вид для файлов и обычных папок
-                    const icon = item.type === 'folder' ? '📁' : '🎙';
-                    div.innerHTML = `
-                        <div class="item-icon">${icon}</div>
-                        <div class="item-name" data-id="${item.id}">${item.name} ${done ? '<span class="done-mark">✓</span>' : ''}</div>
-                    `;
+                    div.style.backgroundImage = `url('${item.image_url}')`;
+                    div.style.backgroundSize = 'cover';
+                    div.style.backgroundPosition = 'center top';
                 }
-                
+
+                // Название поверх картинки (стили мы уже добавили в CSS)
+                const name = document.createElement('div');
+                name.className = 'item-name';
+                name.innerHTML = `${item.name} ${done ? '<span class="done-mark">✓</span>' : ''}`;
+                name.setAttribute('data-id', item.id);
+
+                // Если картинки нет, показываем стандартную иконку
+                if (!item.image_url || item.type === 'file') {
+                    const icon = document.createElement('div');
+                    icon.className = 'item-icon';
+                    icon.innerHTML = item.type === 'folder' ? '📁' : '🎵';
+                    div.appendChild(icon);
+                }
+
+                div.appendChild(name);
+
+                // Кнопки управления для админа
                 if (isAdmin) {
                     const del = document.createElement('div');
                     del.className = 'del-btn';
                     del.innerHTML = '×';
                     del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
                     div.appendChild(del);
-                    // Добавляем кнопку загрузки обложки (только для папок)
+
                     if (item.type === 'folder') {
                         const cover = document.createElement('div');
                         cover.className = 'cover-btn';
                         cover.innerHTML = '🖼';
-                        cover.onclick = (e) => { 
-                            e.stopPropagation(); 
-                            uploadFolderCover(item.id); 
-                        };
+                        cover.onclick = (e) => { e.stopPropagation(); uploadFolderCover(item.id); };
                         div.appendChild(cover);
                     }
                 }
@@ -324,50 +286,34 @@
                 container.appendChild(div);
             });
         }
-async function uploadFolderCover(folderId) {
+
+        async function uploadFolderCover(folderId) {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.onchange = async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-
                 const status = document.getElementById('upload-status');
-                status.innerText = "⏳ Загружаю обложку...";
-
-                const path = `folder-covers/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-
+                status.innerText = "⏳ Загружаю...";
+                const path = `folder-covers/${Date.now()}_cover`;
                 try {
-                    // 1. Загружаем файл в Storage Supabase
                     const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/folder-covers/${path}`, {
                         method: 'POST',
                         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
                         body: file
                     });
-
-                    if (!uploadRes.ok) throw new Error('Ошибка загрузки в Storage');
-
+                    if (!uploadRes.ok) throw new Error('Storage error');
                     const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/folder-covers/${path}`;
-
-                    // 2. Обновляем ссылку в таблице items
-                    const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${folderId}`, {
+                    await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${folderId}`, {
                         method: 'PATCH',
-                        headers: {
-                            'apikey': SUPABASE_KEY, 
-                            'Authorization': `Bearer ${SUPABASE_KEY}`,
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
                         body: JSON.stringify({ image_url: imageUrl })
                     });
-
-                    if (!updateRes.ok) throw new Error('Ошибка обновления таблицы');
-
                     status.innerText = "✅ Готово!";
                     setTimeout(() => status.innerText = "", 2000);
                     loadContent(currentFolderId, false);
-
                 } catch (err) {
-                    console.error(err);
                     status.innerText = "❌ Ошибка";
                 }
             };
