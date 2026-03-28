@@ -142,6 +142,7 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
 }
         
        #admin-panel {
+           display: none !important;
     position: fixed;
     top: 95px !important; /* Сразу под шапкой */
     right: 15px; /* Прижмем к правому краю */
@@ -177,7 +178,7 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
 </head>
 <body>
 
-    <div id="admin-panel">
+  <div id="admin-panel" style="display: none;">
         <div class="admin-buttons">
             <button class="admin-btn" onclick="createNewFolder()">+ Папка</button>
             <button class="admin-btn" id="upload-btn" onclick="document.getElementById('file-input').click()" style="display:none">+ Файлы</button>
