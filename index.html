@@ -15,7 +15,8 @@
             color: #fff; /* Возвращаем белый текст */
             margin: 0;
             padding: 0;
-            background: #000; /* Твой старый темно-серый/черный фон */
+            background: radial-gradient(circle at top right, #1a1a2e 0%, #000 70%);
+background-attachment: fixed; /* Чтобы фон не уплывал при скролле */
             min-height: 100vh;
         }
 
@@ -47,7 +48,7 @@
     }
 .item {
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         position: relative;
         overflow: hidden;
         display: flex !important;
@@ -56,8 +57,8 @@
         height: 140px;
         min-width: 0 !important; /* Позволяет папкам сжиматься в сетку */
         width: 100% !important;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(5px);
+        background: rgba(255, 255, 255, 0.03) !important; /* Еще прозрачнее */
+    backdrop-filter: blur(12px) !important; /* Размытие сильнее — эффект станет «дороже» */
         cursor: pointer;
     transition: transform 0.1s ease-out, background 0.2s;
     }
