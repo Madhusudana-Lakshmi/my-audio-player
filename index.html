@@ -32,46 +32,52 @@
         }
 
         .header { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    #content {
+   #content {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 колонки на телефоне */
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             padding: 12px;
-            padding-bottom: 250px; /* Отступ для плеера */
+            padding-bottom: 200px;
         }
 
         .item {
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative; /* Чтобы текст прилипал к низу */
+            position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: flex-end; /* Текст падает вниз */
-            height: 140px; /* Квадратные плитки */
-            background: rgba(255, 255, 255, 0.05); /* Фон по умолчанию */
+            height: 140px;
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(5px);
             cursor: pointer;
-            transition: transform 0.1s;
         }
 
-        /* Стиль для текста, который лежит ПОВЕРХ картинки ВНИЗУ */
         .item-name {
             font-size: 11px;
             font-weight: 500;
             line-height: 1.2;
-            padding: 8px 6px; /* Отступы для текста */
+            padding: 8px 5px;
             width: 100%;
             box-sizing: border-box;
             text-align: center;
-            color: #fff; /* Белый текст */
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Тень для текста */
-            z-index: 2; /* Поверх картинки */
-            
-            /* Градиент снизу вверх, чтобы текст читался на любом фоне */
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            z-index: 2;
+            /* Прозрачный градиент только снизу, картинка будет яркой */
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
         }
 
+        .item-icon {
+            font-size: 32px;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.3;
+            z-index: 1;
+        }
         /* Убираем старую иконку, если есть картинка */
         .item-type-folder .item-icon {
             font-size: 32px;
