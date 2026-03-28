@@ -216,9 +216,17 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmd2xmZHh3cW5ydnlwYWlmYXlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjU3NzksImV4cCI6MjA4OTk0MTc3OX0.euqolkndodGmo0AJPaiCh60VU9nJjOZ11dz5boVTjnQ';
         const ROOT_ID = '2a23cff1-1d43-4ce9-a952-65b7d7d3f1d0';
 
-        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
-        if (isAdmin) document.getElementById('admin-panel').style.display = 'flex';
+       const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+console.log("Режим админа:", isAdmin); // Это добавит подсказку в консоль браузера (F12)
 
+if (isAdmin) {
+    const panel = document.getElementById('admin-panel');
+    if (panel) {
+        panel.style.setProperty('display', 'flex', 'important');
+    } else {
+        console.error("Ошибка: Блок admin-panel не найден в HTML!");
+    }
+}
         const audio = document.getElementById('main-audio');
         const prog = document.getElementById('progress-bar');
         
