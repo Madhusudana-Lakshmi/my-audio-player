@@ -49,11 +49,13 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
 }
 
 /* Если внутри шапки есть картинка (логотип), добавим ей правил */
-#header img {
+.header img {
     max-width: 100% !important;
-    height: auto !important;
+    height: 90px !important;    /* Добавили четкую высоту */
+    width: auto !important;
     display: block !important;
     margin: 0 auto !important;
+    object-fit: contain !important; /* Чтобы не сплющило */
 }
 
  #content {
