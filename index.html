@@ -20,17 +20,20 @@
         }
 
        .header {
-        position: fixed; /* Фиксируем наверху */
-        top: 0px; /* Шапка немного отступит от верхнего края */
-left: 10px; /* Отступ слева */
-width: calc(100% - 40px); /* Чтобы шапка не вылезала за экран из-за отступов */
-        left: 0;
-        width: 100%;
-        z-index: 1000; /* Чтобы была поверх папок */
-        height: 85px; /* Фиксируем высоту здесь */
+        position: fixed !important;
+        top: 5px !important;
+        left: 20px !important;
+        right: 20px !important; /* Добавили правый край вместо ширины */
+        width: auto !important;  /* Авто-ширина подстроится под края */
+        z-index: 1000;
+        height: 80px;
+        border-radius: 20px; /* Скругление всех углов */
         
-        /* Скругление нижних углов */
-        border-radius: 20px; 
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
         
         /* Настройки картинки */
         background-size: cover;
@@ -44,7 +47,7 @@ width: calc(100% - 40px); /* Чтобы шапка не вылезала за э
         #content {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 15px;
             padding: 100px 12px 200px 12px; /* 100px сверху — это запас под шапку */
         }
 
