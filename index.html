@@ -32,33 +32,39 @@
         }
 
         .header { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        #content { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding: 12px; padding-bottom: 250px; }
-        
-       .item {
+    #content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 колонки на телефоне */
+            gap: 12px;
+            padding: 12px;
+            padding-bottom: 250px; /* Отступ для плеера */
+        }
+
+        .item {
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative; /* Обязательно: для позиционирования текста */
+            position: relative; /* Чтобы текст прилипал к низу */
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: flex-end; /* Текст падает вниз */
-            height: 140px; /* Фиксированная высота плитки на телефоне */
+            height: 140px; /* Квадратные плитки */
             background: rgba(255, 255, 255, 0.05); /* Фон по умолчанию */
             backdrop-filter: blur(5px);
             cursor: pointer;
             transition: transform 0.1s;
         }
 
-        /* Стиль для текста, который лежит ПОВЕРХ картинки */
+        /* Стиль для текста, который лежит ПОВЕРХ картинки ВНИЗУ */
         .item-name {
             font-size: 11px;
             font-weight: 500;
             line-height: 1.2;
-            padding: 8px 6px;
+            padding: 8px 6px; /* Отступы для текста */
             width: 100%;
             box-sizing: border-box;
             text-align: center;
-            color: #fff;
+            color: #fff; /* Белый текст */
             text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Тень для текста */
             z-index: 2; /* Поверх картинки */
             
@@ -66,8 +72,8 @@
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
         }
 
-        /* Стандартная иконка для папок без картинок */
-        .item-icon {
+        /* Убираем старую иконку, если есть картинка */
+        .item-type-folder .item-icon {
             font-size: 32px;
             position: absolute;
             top: 30%;
