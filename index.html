@@ -178,15 +178,17 @@
                 const done = isDone(item.id);
                 div.className = `item type-${item.type} ${done ? 'is-done' : ''}`;
                 
-                div.innerHTML = `
-                    if (item.type === 'folder' && item.image_url) {
+               // ПРОВЕРКА: Если это папка И у неё есть картинка
+                if (item.type === 'folder' && item.image_url) {
                     div.innerHTML = `
                         <img src="${item.image_url}" class="folder-cover">
                         <div class="item-name" data-id="${item.id}">${item.name}</div>
                     `;
                 } else {
+                    // Стандартный вид для файлов и обычных папок
+                    const icon = item.type === 'folder' ? '📁' : '🎙';
                     div.innerHTML = `
-                        <div class="item-icon">${item.type === 'folder' ? '📁' : '🎙'}</div>
+                        <div class="item-icon">${icon}</div>
                         <div class="item-name" data-id="${item.id}">${item.name} ${done ? '<span class="done-mark">✓</span>' : ''}</div>
                     `;
                 }
