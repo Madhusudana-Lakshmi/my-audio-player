@@ -45,11 +45,19 @@
         .item.type-file .item-icon { margin: 0 15px 0 0; font-size: 20px; }
        .folder-cover {
             width: 100%;
-            height: 90px; /* Оптимальная высота для плитки */
-            object-fit: cover; /* Это не даст картинке растягиваться, она будет аккуратно обрезана */
+            height: auto; /* Позволяем высоте подстраиваться под пропорции */
+            aspect-ratio: 16 / 9; /* ПРИНУДИТЕЛЬНО задаем пропорции блока */
+            object-fit: cover; /* Сохраняем, чтобы не было дырок */
             object-position: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             display: block;
+        }
+
+        .item-type-folder {
+            min-height: 140px; /* Задаем минимальную общую высоту карточки */
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.05);
         }
 
         /* Добавим это сразу под .folder-cover, чтобы текст не прыгал */
