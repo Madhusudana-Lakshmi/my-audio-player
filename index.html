@@ -114,9 +114,13 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
    #player-container {
     position: fixed !important; /* Плеер всегда на месте, даже при скролле */
     bottom: 15px !important;    /* Отступ от нижнего края (для эффекта островка) */
-    left: 10px !important;
-    right: 10px !important;
-    width: calc(100% - 20px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important; /* Магия центровки */
+    width: 90% !important; /* Занимает 90% ширины на мобилках */
+    max-width: 400px !important; /* Но не больше 400px на компьютерах */
+    
+    /* ... остальные твои стили ... */
+}
     
     /* Оформление "Островка" */
     background: rgba(0, 0, 0, 0.9) !important; 
