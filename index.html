@@ -130,9 +130,9 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
         #progress-bar { width: 90%; margin: 0 auto 10px; height: 10px; accent-color: var(--tg-theme-button-color); }
        .back-btn {
     position: fixed; /* Закрепляем её */
-    top: 95px;       /* Опускаем внутрь шапки */
+    top: 140px;       /* Опускаем внутрь шапки */
     left: 10px;      /* Отступ слева */
-    z-index: 1100;   /* Ставим ВЫШЕ шапки (у шапки 1000) */
+    z-index: 1300;   /* Ставим ВЫШЕ шапки (у шапки 1000) */
     padding: 10px 15px;
     background: rgba(0, 0, 0, 0.6); /* Темная подложка, чтобы текст «Назад» читался */
     color: #fff;
@@ -141,9 +141,10 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
     backdrop-filter: blur(5px); /* Красивое размытие под кнопкой */
 }
         
-        #admin-panel { display: none; 
-    position: fixed; 
-    top: 100px; 
+        #admin-panel {
+    position: fixed;
+    top: 90px !important; /* Сразу под основной шапкой */
+    /* ... остальные стили ... */
     left: 10px; 
     width: calc(100% - 20px); 
     z-index: 1200; 
@@ -155,6 +156,7 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
     border-radius: 15px; 
     backdrop-filter: blur(10px);
     box-sizing: border-box; }
+        
         .admin-buttons { display: flex; gap: 10px; }
         .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;}
         #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; }
