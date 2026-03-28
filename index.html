@@ -137,6 +137,7 @@
         let folderHistory = []; 
         let currentFolderId = null;
         let currentFileId = null;
+        let currentFilesList = [];
 
         // Функции для локального хранения (прогресс и галочки)
         const saveProgress = (id, time) => localStorage.setItem(`pos_${id}`, time);
