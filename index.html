@@ -87,6 +87,14 @@
         .admin-buttons { display: flex; gap: 10px; }
         .admin-btn { background: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;}
         #upload-status { font-size: 14px; color: #4CAF50; font-weight: bold; }
+        .cover-btn { 
+            position: absolute; bottom: 5px; right: 10px; 
+            color: rgba(255,255,255,0.7); font-size: 14px; 
+            padding: 5px; cursor: pointer; z-index: 10; 
+            opacity: 0; transition: opacity 0.2s; 
+        }
+        .item:hover .cover-btn { opacity: 1; }
+        .item:hover .del-btn { opacity: 1; }
     </style>
 </head>
 <body>
@@ -199,13 +207,72 @@
                     del.innerHTML = '×';
                     del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
                     div.appendChild(del);
+                    // Добавляем кнопку загрузки обложки (только для папок)
+                    if (item.type === 'folder') {
+                        const cover = document.createElement('div');
+                        cover.className = 'cover-btn';
+                        cover.innerHTML = '🖼';
+                        cover.onclick = (e) => { 
+                            e.stopPropagation(); 
+                            uploadFolderCover(item.id); 
+                        };
+                        div.appendChild(cover);
+                    }
                 }
 
                 div.onclick = () => item.type === 'folder' ? loadContent(item.id) : play(item.url, item.name, item.id);
                 container.appendChild(div);
             });
         }
+async function uploadFolderCover(folderId) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
 
+                const status = document.getElementById('upload-status');
+                status.innerText = "⏳ Загружаю обложку...";
+
+                const path = `folder-covers/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+
+                try {
+                    // 1. Загружаем файл в Storage Supabase
+                    const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/folder-covers/${path}`, {
+                        method: 'POST',
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+                        body: file
+                    });
+
+                    if (!uploadRes.ok) throw new Error('Ошибка загрузки в Storage');
+
+                    const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/folder-covers/${path}`;
+
+                    // 2. Обновляем ссылку в таблице items
+                    const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${folderId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_KEY, 
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ image_url: imageUrl })
+                    });
+
+                    if (!updateRes.ok) throw new Error('Ошибка обновления таблицы');
+
+                    status.innerText = "✅ Готово!";
+                    setTimeout(() => status.innerText = "", 2000);
+                    loadContent(currentFolderId, false);
+
+                } catch (err) {
+                    console.error(err);
+                    status.innerText = "❌ Ошибка";
+                }
+            };
+            input.click();
+        }
         async function deleteItem(id, name) {
             if (!confirm(`Удалить "${name}"?`)) return;
             await fetch(`${SUPABASE_URL}/rest/v1/items?id=eq.${id}`, {
