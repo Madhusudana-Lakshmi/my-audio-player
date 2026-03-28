@@ -43,10 +43,33 @@
         .item.type-file { grid-column: span 2; display: flex; align-items: center; text-align: left; padding: 12px; }
         .item-icon { font-size: 22px; padding: 10px 0; }
         .item.type-file .item-icon { margin: 0 15px 0 0; font-size: 20px; }
-        .folder-cover {
-            width: 100%; height: 80px; 
-            object-fit: cover; 
+       .folder-cover {
+            width: 100%;
+            height: 90px; /* Оптимальная высота для плитки */
+            object-fit: cover; /* Это не даст картинке растягиваться, она будет аккуратно обрезана */
+            object-position: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: block;
+        }
+
+        /* Добавим это сразу под .folder-cover, чтобы текст не прыгал */
+        .item-type-folder {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .item-type-folder .item-name {
+            padding: 6px 4px;
+            font-size: 11px;
+            line-height: 1.2;
+            background: rgba(0, 0, 0, 0.5); /* Темная плашка, чтобы текст всегда читался */
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            margin: 0;
         }
         .item-name { font-size: 12px; word-break: break-word; flex-grow: 1; padding: 8px 5px; }
         .item.is-playing { 
