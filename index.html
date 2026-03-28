@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
     <link rel="manifest" href="manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vaishnava Lectoriya</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-image: url('http://googleusercontent.com/image_collection/image_retrieval/7191242288474391484_0');
+            --bg-image: url('https://googleusercontent.com/image_collection/image_retrieval/7191242288474391484_0');
             --tg-theme-button-color: #3897f0;
         }
         
@@ -50,7 +50,6 @@
             box-shadow: 0 0 8px rgba(56, 151, 240, 0.4); 
         }
 
-        /* Стиль для галочки прослушано */
         .done-mark { color: #4CAF50; font-weight: bold; margin-left: 10px; font-size: 18px; }
         .item.is-done { border: 1px solid rgba(76, 175, 80, 0.4); background: rgba(76, 175, 80, 0.1); }
 
@@ -139,7 +138,6 @@
         let currentFileId = null;
         let currentFilesList = [];
 
-        // Функции для локального хранения (прогресс и галочки)
         const saveProgress = (id, time) => localStorage.setItem(`pos_${id}`, time);
         const getProgress = (id) => parseFloat(localStorage.getItem(`pos_${id}`)) || 0;
         const markDone = (id) => localStorage.setItem(`done_${id}`, 'true');
@@ -173,7 +171,6 @@
             items.forEach(item => {
                 const div = document.createElement('div');
                 const done = isDone(item.id);
-                // Добавляем класс is-done, если файл прослушан
                 div.className = `item type-${item.type} ${done ? 'is-done' : ''}`;
                 
                 div.innerHTML = `
@@ -213,11 +210,10 @@
         function play(url, name, id) {
             currentFileId = id;
             document.getElementById('now-playing').innerText = name;
-            // Убираем подсветку со всех элементов и добавляем текущему
             document.querySelectorAll('.item').forEach(el => el.classList.remove('is-playing'));
             const currentEl = document.querySelector(`.item-name[data-id="${id}"]`);
             if (currentEl) currentEl.parentElement.classList.add('is-playing');
-            // Передаем данные на заблокированный экран
+            
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: name,
@@ -226,7 +222,7 @@
                 });
             }
             audio.src = url;
-            audio.load(); // Принудительно подгружаем файл для системы
+            audio.load(); 
             if ('mediaSession' in navigator) { 
                 navigator.mediaSession.playbackState = "playing"; 
             }
@@ -235,11 +231,9 @@
             document.getElementById('play-pause').innerText = '⏸';
         }
 
-        // Ждем, пока загрузятся данные аудиофайла, чтобы безопасно перемотать
         audio.onloadedmetadata = () => {
             if (currentFileId) {
                 const savedTime = getProgress(currentFileId);
-                // Если файл прослушан меньше чем на 95%, продолжаем с того же места
                 if (savedTime > 0 && savedTime < audio.duration * 0.95) {
                     audio.currentTime = savedTime;
                 }
@@ -247,8 +241,16 @@
         };
 
         function togglePlay() {
-            if (audio.paused) { audio.play(); document.getElementById('play-pause').innerText = '⏸'; }
-            else { audio.pause(); document.getElementById('play-pause').innerText = '▶'; }
+            if (audio.paused) { 
+                audio.play(); 
+                document.getElementById('play-pause').innerText = '⏸';
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
+            }
+            else { 
+                audio.pause(); 
+                document.getElementById('play-pause').innerText = '▶'; 
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
+            }
         }
 
         function skip(s) { audio.currentTime += s; }
@@ -261,17 +263,12 @@
             
             if (audio.duration) {
                 document.getElementById('duration-time').innerText = formatTime(audio.duration);
-                
-                // Сохраняем прогресс (только если прошло больше 1 сек)
                 if (currentFileId && audio.currentTime > 1) {
                     saveProgress(currentFileId, audio.currentTime);
                 }
                 
-                // Если прослушано более 95% и галочка еще не стоит
                 if ((audio.currentTime / audio.duration > 0.95) && !isDone(currentFileId)) {
                     markDone(currentFileId);
-                    
-                    // Мгновенно зажигаем галочку на экране без перезагрузки папки
                     const nameElements = document.querySelectorAll('.item-name');
                     nameElements.forEach(el => {
                         if (el.getAttribute('data-id') === currentFileId) {
@@ -286,7 +283,7 @@
         };
 
         prog.oninput = () => { audio.currentTime = prog.value; };
-        // Автопереключение на следующий трек
+
         audio.onended = () => {
             const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
             if (currentIndex !== -1 && currentIndex < currentFilesList.length - 1) {
@@ -296,8 +293,8 @@
                 stopPlayer(); 
             }
         };
-        // Управление кнопками телефона (MediaSession)
-       if ('mediaSession' in navigator) {
+
+        if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('play', () => { 
                 audio.play(); 
                 navigator.mediaSession.playbackState = "playing";
@@ -323,14 +320,6 @@
                 }
             });
         }
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-        const currentIndex = currentFilesList.findIndex(f => f.id === currentFileId);
-        if (currentIndex > 0) {
-            const prevFile = currentFilesList[currentIndex - 1];
-            play(prevFile.url, prevFile.name, prevFile.id);
-        }
-    });
-}
 
         async function createNewFolder() {
             const n = prompt("Имя папки:");
