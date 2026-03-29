@@ -22,7 +22,7 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
 
 .header {
     position: fixed !important;
-    top: 0px !important;
+    top: 1px !important;
     
     /* ЦЕНТРУЕМ ОСТРОВОК */
     left: 50% !important;
@@ -58,7 +58,7 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
 
  #content {
     /* ЦЕНТРОВКА И ОСТРОВОК */
-    margin-top: 115px !important; /* Увеличили отступ, чтобы картинка полностью проявилась */ /* Увеличили отступ сверху, чтобы контент не прятался под шапку */
+    margin-top: 110px !important; /* Увеличили отступ, чтобы картинка полностью проявилась */ /* Увеличили отступ сверху, чтобы контент не прятался под шапку */
 margin-bottom: 20px !important;
 margin-left: auto !important;
 margin-right: auto !important;
@@ -77,17 +77,17 @@ margin-right: auto !important;
     /* ВОЗВРАЩАЕМ 3 ПАПКИ В РЯД */
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important; 
-    gap: 12px !important; /* Расстояние между плитками */
+    gap: 14px !important; /* Расстояние между плитками */
 }
 .item {
-        border-radius: 12px;
+        border-radius: 14px;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
         position: relative;
         overflow: hidden;
         display: flex !important;
         flex-direction: column;
         justify-content: flex-end;
-        height: 140px;
+        height: 160px;
         min-width: 0 !important; /* Позволяет папкам сжиматься в сетку */
         width: 100% !important;
         background-color: rgba(255, 255, 255, 0.05) !important; /* Легкий стеклянный оттенок */
