@@ -20,23 +20,28 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
             min-height: 100vh;
         }
 
-  #header {
+.header {
+    /* ВОЗВРАЩАЕМ БЛОК (С ТОЧКОЙ!) */
     position: fixed !important;
-    top: 10px !important; /* Оставляем зазор сверху для эффекта островка */
-    left: 4% !important;  /* Боковые отступы вместо сложной центровки */
+    top: 10px !important;
+    left: 4% !important;
     right: 4% !important;
     
-    /* ЦЕНТРОВКА СОДЕРЖИМОГО (КАРТИНКИ) */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-
-    /* РАЗМЕРЫ */
-    min-height: 100px !important; /* Увеличил высоту, чтобы картинка точно влезла */
+    
+    min-height: 100px !important;
     padding: 10px !important;
     
-    /* СТИЛЬ */
-    background: rgba(20, 20, 20, 0.6) !important;
+    /* === ВОЗВРАЩАЕМ ТВОЮ КАРТИНКУ И ДОБАВЛЯЕМ СТЕКЛО === */
+    background-image: url('https://sfwlfdxwqnrvypaifayi.supabase.co/storage/v1/object/public/folder-covers/folder-covers/333333.jpg') !important; /* <-- ССЫЛКА ЗДЕСЬ */
+    background-color: rgba(20, 20, 20, 0.6) !important; /* Матовое стекло поверх */
+    background-size: contain !important; /* Картинка будет видна целиком */
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    
+    /* СТИЛЬ ОСТРОВКА */
     backdrop-filter: blur(15px) !important;
     -webkit-backdrop-filter: blur(15px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -45,17 +50,6 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
     
     z-index: 3000 !important;
     box-sizing: border-box;
-    overflow: visible !important;
-}
-
-/* Если внутри шапки есть картинка (логотип), добавим ей правил */
-#header img {
-    max-width: 100% !important;
-    height: 90px !important;    /* Добавили четкую высоту */
-    width: auto !important;
-    display: block !important;
-    margin: 0 auto !important;
-    object-fit: contain !important; /* Чтобы не сплющило */
 }
 
  #content {
