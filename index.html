@@ -21,27 +21,31 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
         }
 
 .header {
-    /* ВОЗВРАЩАЕМ БЛОК (С ТОЧКОЙ!) */
     position: fixed !important;
     top: 10px !important;
-    left: 4% !important;
-    right: 4% !important;
+    
+    /* ЦЕНТРУЕМ ОСТРОВОК */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    
+    /* ГИБКАЯ ШИРИНА */
+    width: 92% !important;      /* На мобилках будет почти во всю ширину */
+    max-width: 500px !important; /* На компьютере не станет шире 500px */
     
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    
     min-height: 100px !important;
     padding: 10px !important;
     
-    /* === ВОЗВРАЩАЕМ ТВОЮ КАРТИНКУ И ДОБАВЛЯЕМ СТЕКЛО === */
-    background-image: url('https://sfwlfdxwqnrvypaifayi.supabase.co/storage/v1/object/public/folder-covers/folder-covers/333333.jpg') !important; /* <-- ССЫЛКА ЗДЕСЬ */
-    background-color: rgba(20, 20, 20, 0.6) !important; /* Матовое стекло поверх */
-    background-size: contain !important; /* Картинка будет видна целиком */
+    /* ТВОЯ КАРТИНКА */
+    background-image: url('https://sfwlfdxwqnrvypaifayi.supabase.co/storage/v1/object/public/folder-covers/folder-covers/333333.jpg') !important;
+    background-color: rgba(20, 20, 20, 0.6) !important;
+    background-size: contain !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     
-    /* СТИЛЬ ОСТРОВКА */
+    /* СТИЛЬ СТЕКЛА */
     backdrop-filter: blur(15px) !important;
     -webkit-backdrop-filter: blur(15px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
