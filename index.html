@@ -185,33 +185,39 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
             padding: 5px; cursor: pointer; z-index: 10;
         }
 
-  #player-container {
+ /* ПОЛНАЯ ЗАМЕНА СТИЛЕЙ ПЛЕЕРА ДЛЯ МАТЧА СО СКРИНШОТОМ */
+#player-container {
     position: fixed !important;
-    bottom: 2px !important; 
+    bottom: 0px !important;    /* Прижимаем к самому низу, как на скрине */
     
     /* ЦЕНТРОВКА */
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 97% !important; 
-    max-width: 600px !important; 
     
-    /* СТИЛЬ "ОСТРОВКА" */
-    background: rgba(20, 20, 20, 0.75) !important;
-    backdrop-filter: blur(18px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    /* ШИРИНА */
+    width: 95% !important;     /* На скрине он не на всю ширину, есть отступы по бокам */
+    max-width: 500px !important; 
     
-    border: 1px solid rgba(255, 255, 255, 0.12) !important; 
-    border-radius: 0 0 30px 30px !important; 
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
+    /* СТИЛЬ "МАТОВОГО СТЕКЛА" (как на скрине) */
+    background: rgba(10, 10, 10, 0.7) !important; /* Очень темный, полупрозрачный */
+    backdrop-filter: blur(25px) saturate(160%) !important; /* Глубокое размытие */
+    -webkit-backdrop-filter: blur(25px) saturate(160%);
     
-    z-index: 2000 !important;
-    padding: 10px 15px !important;
-    box-sizing: border-box;
-    display: none; 
-    flex-direction: column;
-    z-index: 1000;
-    padding: 10px;
-    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important; /* Едва заметная рамка */
+    border-radius: 30px !important; /* Плавное закругление со всех сторон */
+    
+    /* ТЕНИ ДЛЯ ОБЪЕМА */
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6) !important; 
+    
+    /* ВНУТРЕННИЕ ОТСТУПЫ */
+    padding: 20px !important; /* Больше отступов внутри */
+    box-sizing: border-box !important;
+    
+    /* ОТОБРАЖЕНИЕ */
+    display: none; /* JavaScript включает 'flex' */
+    flex-direction: column !important;
+    
+    z-index: 4000 !important; /* Самый высокий приоритет */
 }
 
         .time-info { 
