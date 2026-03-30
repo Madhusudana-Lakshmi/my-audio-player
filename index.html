@@ -422,63 +422,63 @@ if (isAdmin) {
     loadContent(prevFolder || ROOT_ID, false);
 }
 
-        function render(items) {
-            const container = document.getElementById('content');
-            container.innerHTML = '';
-            
-            items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
-            currentFilesList = items.filter(i => i.type === 'file');
-
-            items.forEach(item => {
-                const div = document.createElement('div');
-                const done = isDone(item.id);
-                items.forEach(item => {
-    const div = document.createElement('div');
-    const done = isDone(item.id);
+       function render(items) {
+    const container = document.getElementById('content');
+    container.innerHTML = '';
     
-    // ПРОВЕРКА: Проигрывается ли этот файл сейчас?
-    const isPlaying = (currentFileId === item.id); 
+    // Сортировка: сначала папки, потом файлы
+    items.sort((a,b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1));
+    currentFilesList = items.filter(i => i.type === 'file');
 
-    // Добавляем класс 'is-playing', если ID совпадает
-    div.className = `item item-type-${item.type} ${item.type === 'file' ? 'list-view-file' : ''} ${done ? 'is-done' : ''} ${isPlaying ? 'is-playing' : ''}`;
-    
-    // ... остальной код функции render
-                
-                if (item.type === 'folder' && item.image_url) {
-                    div.style.backgroundImage = `url('${item.image_url}')`;
-                    div.style.backgroundSize = 'cover';
-                    div.style.backgroundPosition = 'center top';
-                }
+    items.forEach(item => {
+        const div = document.createElement('div');
+        const done = isDone(item.id);
+        
+        // ПРОВЕРКА: Проигрывается ли этот файл сейчас?
+        const isPlaying = (currentFileId === item.id); 
 
-                const name = document.createElement('div');
-                name.className = 'item-name';
-                name.innerHTML = `${item.name} ${done ? '<span class="done-mark">✓</span>' : ''}`;
-                name.setAttribute('data-id', item.id);
+        // Правильное назначение классов (одной строкой)
+        div.className = `item item-type-${item.type} ${item.type === 'file' ? 'list-view-file' : ''} ${done ? 'is-done' : ''} ${isPlaying ? 'is-playing' : ''}`;
+        
+        // Установка фона для папок
+        if (item.type === 'folder' && item.image_url) {
+            div.style.backgroundImage = `url('${item.image_url}')`;
+            div.style.backgroundSize = 'cover';
+            div.style.backgroundPosition = 'center top';
+        }
 
-                if (!item.image_url || item.type === 'file') {
-                    const icon = document.createElement('div');
-                    icon.className = 'item-icon';
-                    icon.innerHTML = item.type === 'folder' ? '📁' : '🎵';
-                    div.appendChild(icon);
-                }
+        const name = document.createElement('div');
+        name.className = 'item-name';
+        name.innerHTML = `${item.name} ${done ? '<span class="done-mark">✓</span>' : ''}`;
+        name.setAttribute('data-id', item.id);
 
-                div.appendChild(name);
+        // Иконка (если нет картинки или это файл)
+        if (!item.image_url || item.type === 'file') {
+            const icon = document.createElement('div');
+            icon.className = 'item-icon';
+            icon.innerHTML = item.type === 'folder' ? '📁' : '🎵';
+            div.appendChild(icon);
+        }
 
-                if (isAdmin) {
-                    const del = document.createElement('div');
-                    del.className = 'del-btn';
-                    del.innerHTML = '×';
-                    del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id, item.name); };
-                    div.appendChild(del);
-                    
-                // Кнопка переименования
-const edit = document.createElement('div');
-edit.className = 'edit-btn'; // МЫ ЗАМЕНИЛИ ЭТУ СТРОКУ (убрали длинный .style)
-edit.innerHTML = '✎';
-edit.onclick = (e) => {
-    e.stopPropagation();
-    renameFolder(item.id, item.name);
-};
+        div.appendChild(name);
+
+        // Логика клика
+        div.onclick = () => {
+            if (item.type === 'folder') {
+                loadContent(item.id);
+            } else {
+                playFile(item);
+            }
+        };
+
+        // Кнопки админа (если нужно)
+        if (typeof isAdmin !== 'undefined' && isAdmin) {
+            addAdminButtons(div, item); 
+        }
+
+        container.appendChild(div);
+    });
+}
 div.appendChild(edit);
 
                     if (item.type === 'folder') {
