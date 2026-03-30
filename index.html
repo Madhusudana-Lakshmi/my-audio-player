@@ -432,7 +432,17 @@ if (isAdmin) {
             items.forEach(item => {
                 const div = document.createElement('div');
                 const done = isDone(item.id);
-                div.className = `item item-type-${item.type} ${item.type === 'file' ? 'list-view-file' : ''} ${done ? 'is-done' : ''}`;
+                items.forEach(item => {
+    const div = document.createElement('div');
+    const done = isDone(item.id);
+    
+    // ПРОВЕРКА: Проигрывается ли этот файл сейчас?
+    const isPlaying = (currentFileId === item.id); 
+
+    // Добавляем класс 'is-playing', если ID совпадает
+    div.className = `item item-type-${item.type} ${item.type === 'file' ? 'list-view-file' : ''} ${done ? 'is-done' : ''} ${isPlaying ? 'is-playing' : ''}`;
+    
+    // ... остальной код функции render
                 
                 if (item.type === 'folder' && item.image_url) {
                     div.style.backgroundImage = `url('${item.image_url}')`;
