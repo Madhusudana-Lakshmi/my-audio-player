@@ -106,69 +106,94 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
 }
         /* РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ */
 
-/* РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ */
+/* ============================================================
+   РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ (НАСТРАИВАЕМЫЙ)
+   ============================================================ */
 
-/* 1. Основной контейнер файла (полоска) */
+/* 1. КОНТЕЙНЕР СПИСКА (Общие настройки плотности) */
+#content {
+    display: flex !important;
+    flex-direction: column !important;
+    
+    /* ГАП (ОТСТУП) МЕЖДУ СТРОКАМИ: 
+       0px - слитно, 2px - тонкая линия, 5px - заметный разрыв */
+    gap: 2px !important; 
+    
+    padding: 10px !important; /* Внешний отступ всего списка от краев экрана */
+}
+
+/* 2. САМА ПОЛОСКА ФАЙЛА */
 .item.list-view-file {
-    grid-column: span 3 !important; 
-    width: 98% !important;          
-    margin: 0 auto !important;      
-    
-    /* РАССТОЯНИЕ МЕЖДУ ФАЙЛАМИ: меняй это значение */
-    margin-bottom: 0px !important;  
-    
-    /* КОМПАКТНОСТЬ: высота строки */
-    height: 28px !important;        
-    
+    grid-column: auto !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+
+    /* ВЫСОТА СТРОКИ: 
+       28px - экстремально узко, 32-36px - стандарт, 40px+ - просторно */
+    height: 32px !important; 
+
+    /* ВНУТРЕННИЙ ОТСТУП (Padding): 
+       Первое число (0) - верх/низ, второе (12px) - лево/право */
+    padding: 0 12px !important; 
+
+    /* СКРУГЛЕНИЕ УГЛОВ: 0px - острые, 5px - мягкие, 15px - овальные */
+    border-radius: 6px !important;
+
+    /* ПРОЗРАЧНОСТЬ ФОНА: 0.03 - почти не видно, 0.1 - заметно серый */
+    background: rgba(255, 255, 255, 0.05) !important;
+
     display: flex !important;
     flex-direction: row !important;
-    justify-content: flex-start !important;
     align-items: center !important;
-    padding: 0 12px !important;     
-    
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-radius: 10px !important; 
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: none !important; /* Убираем блюр для скорости работы списка */
+    justify-content: flex-start !important;
+    border: none !important;
+    backdrop-filter: none !important;
 }
 
-/* Удаляем отступ у последнего файла, чтобы не раздувать футер */
-.item.list-view-file:last-child {
-    margin-bottom: 0 !important;
-}
-
-/* 2. Иконка ноты в списке */
+/* 3. ИКОНКА (НОТА) */
 .item.list-view-file .item-icon {
-    position: static !important;    /* Возвращаем в поток */
-    transform: none !important;     /* Сбрасываем центровку папок */
-    font-size: 16px !important;     
-    margin-right: 12px !important;
+    position: static !important;
+    transform: none !important;
+    
+    /* РАЗМЕР ИКОНКИ: обычно 14px - 18px */
+    font-size: 15px !important; 
+
+    /* ОТСТУП ОТ ИКОНКИ ДО ТЕКСТА */
+    margin-right: 10px !important; 
+
+    /* ПРОЗРАЧНОСТЬ ИКОНКИ: от 0.1 до 1.0 */
     opacity: 0.5 !important;
-    z-index: 5 !important;
 }
 
-/* 3. Название файла в списке */
+/* 4. ТЕКСТ (НАЗВАНИЕ ЛЕКЦИИ) */
 .item.list-view-file .item-name {
     position: static !important;
-    font-size: 13px !important;     
-    font-weight: 400 !important;    /* Делаем шрифт чуть легче для списка */
-    text-align: left !important;    
-    padding: 0 !important;
-    width: auto !important;
-    background: none !important;    /* Убираем черный градиент папок */
-    text-shadow: none !important;   /* Убираем тяжелую тень */
+    
+    /* РАЗМЕР ШРИФТА: 12px - мелко, 14px - средне, 16px - крупно */
+    font-size: 13px !important; 
+
+    /* ЖИРНОСТЬ ТЕКСТА: 300 - тонкий, 400 - норм, 600 - жирный */
+    font-weight: 400 !important; 
+
     color: rgba(255, 255, 255, 0.9) !important;
+    text-align: left !important;
+    background: none !important;
+    text-shadow: none !important;
+    padding: 0 !important;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;        /* Обрезаем длинные названия красиво */
+    text-overflow: ellipsis; /* Три точки, если название слишком длинное */
 }
 
-/* 4. Корректировка кнопок админа для компактного режима */
+/* 5. КНОПКИ УДАЛЕНИЯ/ПРАВКИ (Для админа) */
 .item.list-view-file .del-btn,
 .item.list-view-file .edit-btn {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 12px !important;
+    /* РАЗМЕР КНОПОК УПРАВЛЕНИЯ */
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 11px !important;
+    
+    position: absolute !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
 }
