@@ -104,6 +104,34 @@ margin-right: auto !important;
 background-color: rgba(255, 255, 255, 0.15) !important;
 transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для мягкости */
 }
+        /* РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ */
+
+/* 1. Переключаем сетку в колонку (после строки 81) */
+#content.list-mode {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+/* 2. Трансформируем плитку в полоску (переопределяем блок .item со строки 82) */
+#content.list-mode .item {
+    width: 100% !important;
+    height: 60px !important;       /* Узкая полоска вместо квадрата */
+    flex-direction: row !important;  /* Контент в ряд */
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: 0 15px !important;
+}
+
+/* 3. Корректируем название (переопределяем .item-name со строки 109) */
+#content.list-mode .item-name {
+    position: static !important;    /* Убираем наложение поверх картинки */
+    background: none !important;    /* Убираем темный градиент фона */
+    text-align: left !important;
+    padding-left: 15px !important;
+    font-size: 14px !important;
+    width: auto !important;
+}
 
         /* НАЗВАНИЕ ВНИЗУ */
         .item-name {
@@ -374,6 +402,7 @@ if (isAdmin) {
                 currentFolderId = folderId;
                 document.getElementById('back-container').style.display = folderId === ROOT_ID ? 'none' : 'block';
                 document.getElementById('upload-btn').style.display = folderId === ROOT_ID ? 'none' : 'block';
+                document.getElementById('content').classList.toggle('list-mode', folderId !== ROOT_ID);
 
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${folderId}&select=*`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
@@ -382,10 +411,14 @@ if (isAdmin) {
             } catch (err) { console.error(err); }
         }
 
-        function goBack() {
-            const prevFolder = folderHistory.pop();
-            loadContent(prevFolder || ROOT_ID, false);
-        }
+       function goBack() {
+    const prevFolder = folderHistory.pop();
+    if (!prevFolder || prevFolder === ROOT_ID) {
+        document.getElementById('content').classList.remove('list-mode');
+    }
+
+    loadContent(prevFolder || ROOT_ID, false);
+}
 
         function render(items) {
             const container = document.getElementById('content');
