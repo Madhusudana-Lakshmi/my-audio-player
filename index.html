@@ -106,36 +106,32 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
 }
         /* РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ */
 
-/* 1. Стили только для элементов-файлов (превращаем их в полоски) */
+/* Уменьшенная высота и ширина аудиофайлов */
 .item.list-view-file {
-    grid-column: span 3 !important; /* Растягиваем файл на всю ширину сетки */
-    width: 100% !important;
-    height: 55px !important;        /* Делаем узким */
-    flex-direction: row !important;  /* Контент в ряд (горизонтально) */
+    grid-column: span 3 !important; 
+    width: 96% !important;          /* Уменьшили ширину, чтобы были отступы по бокам */
+    margin: 0 auto !important;      /* Центрируем узкую полоску */
+    height: 42px !important;        /* Уменьшили высоту (было 55-60px) */
+    flex-direction: row !important;
     justify-content: flex-start !important;
     align-items: center !important;
-    padding: 0 15px !important;
-    background: rgba(255, 255, 255, 0.08) !important;
+    padding: 0 10px !important;     /* Уменьшили внутренние отступы */
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 10px !important; /* Более аккуратные углы для узкой полоски */
 }
 
-/* 2. Название внутри файла-полоски */
-.item.list-view-file .item-name {
-    position: static !important;
-    background: none !important;
-    text-align: left !important;
-    padding-left: 15px !important;
-    font-size: 14px !important;
-    width: auto !important;
-    text-shadow: none !important;
-}
-
-/* 3. Иконка (нотка) внутри файла-полоски */
+/* Корректируем размер иконки и текста для компактности */
 .item.list-view-file .item-icon {
-    position: static !important;
-    transform: none !important;
-    font-size: 20px !important;
-    opacity: 0.8 !important;
-    margin-right: 5px;
+    font-size: 18px !important;     /* Меньше иконка ноты */
+    margin-right: 8px !important;
+    opacity: 0.6 !important;
+}
+
+.item.list-view-file .item-name {
+    font-size: 13px !important;     /* Чуть меньше шрифт */
+    padding: 0 !important;
+    background: none !important;
+    text-shadow: none !important;
 }
 
         /* НАЗВАНИЕ ВНИЗУ */
