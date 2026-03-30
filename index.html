@@ -188,36 +188,24 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
  /* ПОЛНАЯ ЗАМЕНА СТИЛЕЙ ПЛЕЕРА ДЛЯ МАТЧА СО СКРИНШОТОМ */
 #player-container {
     position: fixed !important;
-    bottom: 0px !important;    /* Прижимаем к самому низу, как на скрине */
-    
-    /* ЦЕНТРОВКА */
+    bottom: 10px !important;    /* Чуть приподняли от края */
     left: 50% !important;
     transform: translateX(-50%) !important;
+    width: 92% !important;      /* Сделали чуть уже по бокам */
+    max-width: 450px !important; /* Ограничили максимальную ширину */
     
-    /* ШИРИНА */
-    width: 95% !important;     /* На скрине он не на всю ширину, есть отступы по бокам */
-    max-width: 500px !important; 
+    background: rgba(20, 20, 20, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     
-    /* СТИЛЬ "МАТОВОГО СТЕКЛА" (как на скрине) */
-    background: rgba(10, 10, 10, 0.7) !important; /* Очень темный, полупрозрачный */
-    backdrop-filter: blur(25px) saturate(160%) !important; /* Глубокое размытие */
-    -webkit-backdrop-filter: blur(25px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important; /* Чуть менее скругленный для компактности */
     
-    border: 1px solid rgba(255, 255, 255, 0.08) !important; /* Едва заметная рамка */
-    border-radius: 30px !important; /* Плавное закругление со всех сторон */
-    
-    /* ТЕНИ ДЛЯ ОБЪЕМА */
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6) !important; 
-    
-    /* ВНУТРЕННИЕ ОТСТУПЫ */
-    padding: 20px !important; /* Больше отступов внутри */
-    box-sizing: border-box !important;
-    
-    /* ОТОБРАЖЕНИЕ */
-    display: none; /* JavaScript включает 'flex' */
+    padding: 12px 18px !important;  /* Уменьшили отступы (было 20+) */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    display: none;
     flex-direction: column !important;
-    
-    z-index: 4000 !important; /* Самый высокий приоритет */
+    z-index: 4000 !important;
 }
 
         .time-info { 
