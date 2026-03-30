@@ -56,28 +56,31 @@ background-attachment: fixed; /* Чтобы фон не уплывал при с
     box-sizing: border-box;
 }
 
- #content {
-    /* ЦЕНТРОВКА И ОСТРОВОК */
-    margin-top: 110px !important; /* Увеличили отступ, чтобы картинка полностью проявилась */ /* Увеличили отступ сверху, чтобы контент не прятался под шапку */
-margin-bottom: 20px !important;
-margin-left: auto !important;
-margin-right: auto !important;
+#content {
+    margin-top: 110px !important; 
+    margin-bottom: 20px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     width: 97% !important;
     max-width: 600px !important;
     background: rgba(255, 255, 255, 0.03) !important;
     backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius:  0 0 30px 30px !important;
-    padding: 20px !important;
-    padding-bottom: 220px !important; /* Увеличил, чтобы "остров" плеера не мешал */
+    border-radius: 0 0 30px 30px !important;
+    
+    /* СТРОКА 72: Уменьшаем внутренний отступ, чтобы папки не жались к центру */
+    padding: 12px !important; 
+    
+    padding-bottom: 220px !important;
     box-sizing: border-box;
     min-height: 85vh;
-
-    /* ВОЗВРАЩАЕМ 3 ПАПКИ В РЯД */
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important; 
-    gap: 16px !important; /* Расстояние между плитками */
+    grid-template-columns: repeat(3, 1fr) !important;
+
+    /* СТРОКА 80: ГЛАВНЫЙ ПАРАМЕТР ПЛОТНОСТИ */
+    /* Ставим 6px — это сделает папки кучными и красивыми */
+    gap: 6px !important; 
 }
 .item {
         border-radius: 14px;
@@ -138,11 +141,9 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
 /* 2. ТРЮК ДЛЯ ПЛОТНОСТИ (СХЛОПЫВАНИЕ ДЫР СЕТКИ) */
 /* Этот код применяется ТОЛЬКО к файлам, которые идут сразу ПОСЛЕ другого файла */
 .item.list-view-file + .item.list-view-file {
-    /* НАСТРОЙКА РАССТОЯНИЯ МЕЖДУ ФАЙЛАМИ: 
-       Так как сетка насильно вставляет зазоры (gap), мы компенсируем их минусом!
-       Меняй это значение (например, -10px, -12px, -14px). 
-       Чем больше минус, тем плотнее файлы прижмутся друг к другу. */
-    margin-top: -20px !important; 
+    /* Чтобы между файлами остался зазор ровно в 1 пиксель: 
+       из GAP(6px) вычитаем 5px маржина. */
+    margin-top: -5px !important; 
 }
 
 /* 3. ИКОНКА (НОТА) */
