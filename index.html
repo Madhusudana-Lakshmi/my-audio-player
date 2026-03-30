@@ -107,92 +107,76 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
         /* РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ */
 
 /* ============================================================
-   РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ (НАСТРАИВАЕМЫЙ)
+   РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ (ИСПРАВЛЕННЫЙ: ПАПКИ НЕ ТРОГАЕМ)
    ============================================================ */
 
-/* 1. КОНТЕЙНЕР СПИСКА (Общие настройки плотности) */
-#content {
-    display: flex !important;
-    flex-direction: column !important;
-    
-    /* ГАП (ОТСТУП) МЕЖДУ СТРОКАМИ: 
-       0px - слитно, 2px - тонкая линия, 5px - заметный разрыв */
-    gap: 2px !important; 
-    
-    padding: 10px !important; /* Внешний отступ всего списка от краев экрана */
-}
-
-/* 2. САМА ПОЛОСКА ФАЙЛА */
+/* 1. ОСНОВНАЯ ПОЛОСКА ФАЙЛА */
 .item.list-view-file {
-    grid-column: auto !important;
+    grid-column: 1 / -1 !important; /* Растягиваем полоску на всю ширину сетки */
     width: 100% !important;
-    margin: 0 auto !important;
 
-    /* ВЫСОТА СТРОКИ: 
-       28px - экстремально узко, 32-36px - стандарт, 40px+ - просторно */
-    height: 32px !important; 
+    /* ВЫСОТА СТРОКИ: 32-36px - оптимально для плотного списка */
+    height: 34px !important; 
 
-    /* ВНУТРЕННИЙ ОТСТУП (Padding): 
-       Первое число (0) - верх/низ, второе (12px) - лево/право */
+    /* ВНУТРЕННИЙ ОТСТУП: чтобы текст не прилипал к краям полоски */
     padding: 0 12px !important; 
 
-    /* СКРУГЛЕНИЕ УГЛОВ: 0px - острые, 5px - мягкие, 15px - овальные */
-    border-radius: 6px !important;
-
-    /* ПРОЗРАЧНОСТЬ ФОНА: 0.03 - почти не видно, 0.1 - заметно серый */
-    background: rgba(255, 255, 255, 0.05) !important;
-
+    /* ВНЕШНИЙ ВИД ПОЛОСКИ */
+    border-radius: 6px !important; /* Легкое скругление углов */
+    background: rgba(255, 255, 255, 0.05) !important; /* Цвет фона */
+    
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: flex-start !important;
+    
     border: none !important;
     backdrop-filter: none !important;
+    margin-bottom: 0 !important; 
+}
+
+/* 2. ТРЮК ДЛЯ ПЛОТНОСТИ (СХЛОПЫВАНИЕ ДЫР СЕТКИ) */
+/* Этот код применяется ТОЛЬКО к файлам, которые идут сразу ПОСЛЕ другого файла */
+.item.list-view-file + .item.list-view-file {
+    /* НАСТРОЙКА РАССТОЯНИЯ МЕЖДУ ФАЙЛАМИ: 
+       Так как сетка насильно вставляет зазоры (gap), мы компенсируем их минусом!
+       Меняй это значение (например, -10px, -12px, -14px). 
+       Чем больше минус, тем плотнее файлы прижмутся друг к другу. */
+    margin-top: -12px !important; 
 }
 
 /* 3. ИКОНКА (НОТА) */
 .item.list-view-file .item-icon {
     position: static !important;
     transform: none !important;
-    
-    /* РАЗМЕР ИКОНКИ: обычно 14px - 18px */
-    font-size: 15px !important; 
-
-    /* ОТСТУП ОТ ИКОНКИ ДО ТЕКСТА */
-    margin-right: 10px !important; 
-
-    /* ПРОЗРАЧНОСТЬ ИКОНКИ: от 0.1 до 1.0 */
+    font-size: 15px !important; /* РАЗМЕР ИКОНКИ */
+    margin-right: 10px !important; /* ОТСТУП от иконки до названия */
     opacity: 0.5 !important;
 }
 
 /* 4. ТЕКСТ (НАЗВАНИЕ ЛЕКЦИИ) */
 .item.list-view-file .item-name {
     position: static !important;
-    
-    /* РАЗМЕР ШРИФТА: 12px - мелко, 14px - средне, 16px - крупно */
-    font-size: 13px !important; 
-
-    /* ЖИРНОСТЬ ТЕКСТА: 300 - тонкий, 400 - норм, 600 - жирный */
+    font-size: 13px !important;  /* РАЗМЕР ШРИФТА */
     font-weight: 400 !important; 
-
     color: rgba(255, 255, 255, 0.9) !important;
     text-align: left !important;
     background: none !important;
     text-shadow: none !important;
     padding: 0 !important;
+    
+    /* Обрезка длинных названий троеточием */
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Три точки, если название слишком длинное */
+    text-overflow: ellipsis; 
 }
 
-/* 5. КНОПКИ УДАЛЕНИЯ/ПРАВКИ (Для админа) */
+/* 5. КНОПКИ АДМИНА (Крестик и карандаш) */
 .item.list-view-file .del-btn,
 .item.list-view-file .edit-btn {
-    /* РАЗМЕР КНОПОК УПРАВЛЕНИЯ */
     width: 22px !important;
     height: 22px !important;
     font-size: 11px !important;
-    
     position: absolute !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
