@@ -106,31 +106,36 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
 }
         /* РЕЖИМ СПИСКА ДЛЯ ФАЙЛОВ */
 
-/* 1. Переключаем сетку в колонку (после строки 81) */
-#content.list-mode {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-}
-
-/* 2. Трансформируем плитку в полоску (переопределяем блок .item со строки 82) */
-#content.list-mode .item {
+/* 1. Стили только для элементов-файлов (превращаем их в полоски) */
+.item.list-view-file {
+    grid-column: span 3 !important; /* Растягиваем файл на всю ширину сетки */
     width: 100% !important;
-    height: 60px !important;       /* Узкая полоска вместо квадрата */
-    flex-direction: row !important;  /* Контент в ряд */
+    height: 55px !important;        /* Делаем узким */
+    flex-direction: row !important;  /* Контент в ряд (горизонтально) */
     justify-content: flex-start !important;
     align-items: center !important;
     padding: 0 15px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* 3. Корректируем название (переопределяем .item-name со строки 109) */
-#content.list-mode .item-name {
-    position: static !important;    /* Убираем наложение поверх картинки */
-    background: none !important;    /* Убираем темный градиент фона */
+/* 2. Название внутри файла-полоски */
+.item.list-view-file .item-name {
+    position: static !important;
+    background: none !important;
     text-align: left !important;
     padding-left: 15px !important;
     font-size: 14px !important;
     width: auto !important;
+    text-shadow: none !important;
+}
+
+/* 3. Иконка (нотка) внутри файла-полоски */
+.item.list-view-file .item-icon {
+    position: static !important;
+    transform: none !important;
+    font-size: 20px !important;
+    opacity: 0.8 !important;
+    margin-right: 5px;
 }
 
         /* НАЗВАНИЕ ВНИЗУ */
@@ -402,8 +407,7 @@ if (isAdmin) {
                 currentFolderId = folderId;
                 document.getElementById('back-container').style.display = folderId === ROOT_ID ? 'none' : 'block';
                 document.getElementById('upload-btn').style.display = folderId === ROOT_ID ? 'none' : 'block';
-                document.getElementById('content').classList.toggle('list-mode', folderId !== ROOT_ID);
-
+                
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/items?parent_id=eq.${folderId}&select=*`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
@@ -413,10 +417,6 @@ if (isAdmin) {
 
        function goBack() {
     const prevFolder = folderHistory.pop();
-    if (!prevFolder || prevFolder === ROOT_ID) {
-        document.getElementById('content').classList.remove('list-mode');
-    }
-
     loadContent(prevFolder || ROOT_ID, false);
 }
 
@@ -430,7 +430,7 @@ if (isAdmin) {
             items.forEach(item => {
                 const div = document.createElement('div');
                 const done = isDone(item.id);
-                div.className = `item item-type-${item.type} ${done ? 'is-done' : ''}`;
+                div.className = `item item-type-${item.type} ${item.type === 'file' ? 'list-view-file' : ''} ${done ? 'is-done' : ''}`;
                 
                 if (item.type === 'folder' && item.image_url) {
                     div.style.backgroundImage = `url('${item.image_url}')`;
