@@ -162,11 +162,19 @@ transition: transform 0.1s ease-out; /* Убираем 0s, даем 0.1s для 
             z-index: 1;
         }
 
-        .item.is-playing { 
-            border: 1px solid var(--tg-theme-button-color); 
-            background: rgba(56, 151, 240, 0.15); 
-            box-shadow: 0 0 8px rgba(56, 151, 240, 0.4); 
-        }
+       .item.is-playing { 
+    /* Делаем рамку ярче */
+    border: 2px solid #3897f0 !important; 
+    /* Усиливаем цвет фона */
+    background: rgba(56, 151, 240, 0.25) !important; 
+    /* Добавляем многослойное свечение (внешнее и внутреннее) */
+    box-shadow: 
+        0 0 15px rgba(56, 151, 240, 0.6), 
+        inset 0 0 10px rgba(56, 151, 240, 0.3) !important;
+    /* Немного выделяем элемент масштабом, если хочешь */
+    transform: scale(1.01);
+    z-index: 5; /* Чтобы свечение было поверх соседей */
+}
 
         .done-mark { color: #4CAF50; font-weight: bold; margin-left: 5px; font-size: 14px; }
         .item.is-done { border: 1px solid rgba(76, 175, 80, 0.4); background: rgba(76, 175, 80, 0.1); }
