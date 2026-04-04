@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacred Store</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --main-color: #8e6d45; --bg-color: #fcf9f5; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: #333; margin: 0; padding: 15px; padding-bottom: 30px; }
+        h2 { text-align: center; color: var(--main-color); margin-top: 0; }
+        
+        /* Сетка для категорий и товаров */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .card { background: white; border-radius: 12px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; flex-direction: column; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card:active { transform: scale(0.97); }
+        .card img { width: 100%; border-radius: 8px; height: 140px; object-fit: cover; background: #eee; }
+        
+        .title { font-size: 14px; font-weight: bold; margin: 8px 0 4px 0; height: 34px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .price { color: var(--main-color); font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+        
+        button { background: var(--main-color); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+        
+        .back-btn { display: none; background: #ddd; color: #333; margin-bottom: 15px; width: auto; padding: 8px 15px; }
+        
+        #products-view { display: none; }
+    </style>
+</head>
+<body>
+    <h2 id="page-title">Каталог ✨</h2>
+    
+    <div class="grid" id="categories-view"></div>
+
+    <div id="products-view">
+        <button class="back-btn" id="back-btn" onclick="showCategories()">🔙 Назад в категории</button>
+        <div class="grid" id="catalog"></div>
+    </div>
+
+    <script>
+        const script = document.createElement('script');
+        script.src = "products.js?v=" + Date.now();
+        document.head.appendChild(script);
+
+        const categoryList = ["Благовония", "Одежда", "Мурти", "Четки", "Параферналии", "Красота"];
+
+        script.onload = function() {
+            window.Telegram.WebApp.expand();
+            renderCategories();
+        };
+
+        function renderCategories() {
+            document.getElementById('categories-view').style.display = 'grid';
+            document.getElementById('products-view').style.display = 'none';
+            document.getElementById('page-title').innerText = "Каталог ✨";
+            
+            const catView = document.getElementById('categories-view');
+            catView.innerHTML = '';
+
+            categoryList.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => showProducts(cat);
+                // Картинка берется из папки categories по названию категории
+                card.innerHTML = `
+                    <img src="categories/${cat}.jpg?v=${Date.now()}" onerror="this.src='https://via.placeholder.com/150?text=${cat}'">
+                    <div class="title">${cat}</div>
+                `;
+                catView.appendChild(card);
+            });
+        }
+
+        function showProducts(categoryName) {
+            document.getElementById('categories-view').style.display = 'none';
+            document.getElementById('products-view').style.display = 'block';
+            document.getElementById('page-title').innerText = categoryName;
+            document.getElementById('back-btn').style.display = 'inline-block';
+
+            const catalog = document.getElementById('catalog');
+            catalog.innerHTML = '';
+
+            if (typeof products !== 'undefined') {
+                const filteredProducts = products.filter(p => p.category === categoryName);
+                
+                if (filteredProducts.length === 0) {
+                    catalog.innerHTML = '<p style="grid-column: span 2; text-align: center;">В этой категории пока нет товаров.</p>';
+                }
+
+                filteredProducts.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${item.img}?v=${Date.now()}" onerror="this.src='https://via.placeholder.com/150?text=No+Photo'">
+                        <div class="title">${item.name}</div>
+                        <div class="price">${item.price} ₴</div>
+                        <button onclick="event.stopPropagation(); sendOrder('${item.category}', '${item.name}', '${item.price}')">Купить</button>
+                    `;
+                    catalog.appendChild(card);
+                });
+            }
+        }
+
+        function showCategories() {
+            renderCategories();
+        }
+
+        function sendOrder(category, name, price) {
+            window.Telegram.WebApp.sendData(`Заказ: ${name} (${category}) - ${price} ₴`);
+            window.Telegram.WebApp.close();
+        }
+    </script>
+</body>
+</html>
