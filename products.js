@@ -1,0 +1,1 @@
+const products = [{"id": 3, "name": "Радха и Кришна", "desc": "Высота 28см", "price": 3500.0, "category": "Мурти", "img": "img/p3.jpg"}];
