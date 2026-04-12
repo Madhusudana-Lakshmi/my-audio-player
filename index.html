@@ -6,24 +6,166 @@
     <title>Sattva Ecosystem</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Оставляю твои стили без изменений, они отличные */
-        :root { --main-color: #8e6d45; --bg-color: #fcf9f5; --app-bg: #e0e0e0; --card-bg: white; --text-color: #333; --btn-text: white; --shadow: rgba(0,0,0,0.1); }
-        body.dark-mode { --bg-color: #1a1a1a; --app-bg: #121212; --card-bg: #2d2d2d; --text-color: #f5f5f5; --shadow: rgba(0,0,0,0.5); }
-        body { font-family: -apple-system, sans-serif; background-color: var(--app-bg); margin: 0; display: flex; justify-content: center; color: var(--text-color); transition: background 0.3s ease; }
-        .app-container { background-color: var(--bg-color); width: 100%; max-width: 500px; min-height: 100vh; padding: 15px; box-sizing: border-box; position: relative; }
-        .theme-toggle-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; background: var(--card-bg); border-radius: 50%; border: none; box-shadow: 0 2px 8px var(--shadow); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; color: var(--text-color); }
-        .header-panel { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 20px; min-height: 40px; }
-        h2 { text-align: center; color: var(--main-color); margin: 0; font-size: 20px; }
-        .back-circle-btn { display: none; position: absolute; left: 0; width: 40px; height: 40px; background: var(--card-bg); border-radius: 50%; border: none; box-shadow: 0 2px 5px var(--shadow); cursor: pointer; align-items: center; justify-content: center; color: var(--main-color); z-index: 10; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .cat-card { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 3/4; cursor: pointer; box-shadow: 0 4px 10px var(--shadow); background: #ddd; }
-        .cat-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .cat-card .title-overlay { position: absolute; bottom: 0; left: 0; right: 0; color: white; padding: 10px; font-weight: bold; font-size: 16px; text-align: center; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
-        .card { background: var(--card-bg); border-radius: 18px; padding: 8px; box-shadow: 0 2px 8px var(--shadow); display: flex; flex-direction: column; text-align: center; cursor: pointer; }
-        .card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 12px; background: #eee; margin-bottom: 8px; }
-        .title { font-size: 14px; font-weight: bold; margin: 0 0 4px 0; height: 34px; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-color); }
-        .price { color: var(--main-color); font-weight: bold; font-size: 16px; margin-bottom: 8px; }
-        .buy-btn { background: var(--main-color); color: var(--btn-text); border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+        /* Твои фирменные стили */
+        :root { 
+            --main-color: #8e6d45; 
+            --bg-color: #fcf9f5; 
+            --app-bg: #e0e0e0; 
+            --card-bg: white; 
+            --text-color: #333; 
+            --btn-text: white; 
+            --shadow: rgba(0,0,0,0.1); 
+        }
+        body.dark-mode { 
+            --bg-color: #1a1a1a; 
+            --app-bg: #121212; 
+            --card-bg: #2d2d2d; 
+            --text-color: #f5f5f5; 
+            --shadow: rgba(0,0,0,0.5); 
+        }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background-color: var(--app-bg); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            color: var(--text-color); 
+            transition: background 0.3s ease; 
+        }
+        .app-container { 
+            background-color: var(--bg-color); 
+            width: 100%; 
+            max-width: 500px; 
+            min-height: 100vh; 
+            padding: 15px; 
+            box-sizing: border-box; 
+            position: relative; 
+        }
+        .theme-toggle-btn { 
+            position: absolute; 
+            top: 15px; 
+            right: 15px; 
+            width: 40px; 
+            height: 40px; 
+            background: var(--card-bg); 
+            border-radius: 50%; 
+            border: none; 
+            box-shadow: 0 2px 8px var(--shadow); 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 100; 
+            color: var(--text-color); 
+        }
+        .header-panel { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            margin-bottom: 20px; 
+            min-height: 40px; 
+        }
+        h2 { 
+            text-align: center; 
+            color: var(--main-color); 
+            margin: 0; 
+            font-size: 20px; 
+        }
+        .back-circle-btn { 
+            display: none; 
+            position: absolute; 
+            left: 0; 
+            width: 40px; 
+            height: 40px; 
+            background: var(--card-bg); 
+            border-radius: 50%; 
+            border: none; 
+            box-shadow: 0 2px 5px var(--shadow); 
+            cursor: pointer; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--main-color); 
+            z-index: 10; 
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+        .cat-card { 
+            position: relative; 
+            border-radius: 18px; 
+            overflow: hidden; 
+            aspect-ratio: 3/4; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px var(--shadow); 
+            background: #ddd; 
+        }
+        .cat-card img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+        }
+        .cat-card .title-overlay { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            color: white; 
+            padding: 10px; 
+            font-weight: bold; 
+            font-size: 16px; 
+            text-align: center; 
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8); 
+            background: linear-gradient(transparent, rgba(0,0,0,0.7)); 
+        }
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 18px; 
+            padding: 8px; 
+            box-shadow: 0 2px 8px var(--shadow); 
+            display: flex; 
+            flex-direction: column; 
+            text-align: center; 
+            cursor: pointer; 
+        }
+        .card img { 
+            width: 100%; 
+            aspect-ratio: 1 / 1; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            background: #eee; 
+            margin-bottom: 8px; 
+        }
+        .title { 
+            font-size: 14px; 
+            font-weight: bold; 
+            margin: 0 0 4px 0; 
+            height: 34px; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--text-color); 
+        }
+        .price { 
+            color: var(--main-color); 
+            font-weight: bold; 
+            font-size: 16px; 
+            margin-bottom: 8px; 
+        }
+        .buy-btn { 
+            background: var(--main-color); 
+            color: var(--btn-text); 
+            border: none; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+        }
         #products-view { display: none; }
     </style>
 </head>
@@ -38,28 +180,32 @@
         </div>
         
         <div class="grid" id="categories-view"></div>
-        <div id="products-view"><div class="grid" id="catalog"></div></div>
+        <div id="products-view">
+            <div class="grid" id="catalog"></div>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const API_URL = "http://127.0.0.1:8000/products/"; // Твой FastAPI адрес
-        let allProducts = [];
+        const API_URL = "http://127.0.0.1:8000"; 
+        let categoriesData = [];
 
-        // 1. Загрузка данных из FastAPI
-        async function loadProducts() {
+        // 1. Загрузка списка категорий из БД
+        async function loadInitialData() {
             try {
-                const response = await fetch(API_URL);
-                allProducts = await response.json();
+                const response = await fetch(`${API_URL}/categories/`);
+                if (!response.ok) throw new Error("Ошибка сети");
+                categoriesData = await response.json();
                 renderCategories();
             } catch (error) {
-                console.error("Ошибка загрузки:", error);
+                console.error("Ошибка загрузки категорий:", error);
                 document.getElementById('page-title').innerText = "Ошибка сервера ❌";
             }
         }
 
+        // 2. Отображение категорий в виде плиток
         function renderCategories() {
             document.getElementById('categories-view').style.display = 'grid';
             document.getElementById('products-view').style.display = 'none';
@@ -69,57 +215,83 @@
             const catView = document.getElementById('categories-view');
             catView.innerHTML = '';
 
-            // Вытаскиваем уникальные категории из тех товаров, что есть в базе
-            const categories = [...new Set(allProducts.map(p => p.category))];
+            if (categoriesData.length === 0) {
+                catView.innerHTML = '<p style="grid-column: 1/3; text-align: center; padding: 20px;">Каталог пуст. Добавьте данные в админке!</p>';
+                return;
+            }
 
-            categories.forEach(cat => {
+            categoriesData.forEach(cat => {
                 const card = document.createElement('div');
                 card.className = 'cat-card';
-                card.onclick = () => showProducts(cat);
+                card.onclick = () => showProducts(cat.name);
                 card.innerHTML = `
-                    <img src="https://via.placeholder.com/300x400?text=${cat}">
-                    <div class="title-overlay">${cat}</div>
+                    <img src="${cat.image_url || 'https://via.placeholder.com/300x400?text=' + cat.name}" 
+                         onerror="this.src='https://via.placeholder.com/300x400?text=Sattva'">
+                    <div class="title-overlay">${cat.name}</div>
                 `;
                 catView.appendChild(card);
             });
         }
 
-        function showProducts(categoryName) {
+        // 3. Загрузка и показ товаров конкретной категории
+        async function showProducts(categoryName) {
             document.getElementById('categories-view').style.display = 'none';
             document.getElementById('products-view').style.display = 'block';
             document.getElementById('page-title').innerText = categoryName;
             document.getElementById('back-btn').style.display = 'flex';
 
             const catalog = document.getElementById('catalog');
-            catalog.innerHTML = '';
+            catalog.innerHTML = '<p style="text-align: center; width: 100%;">Синхронизация...</p>';
 
-            const filtered = allProducts.filter(p => p.category === categoryName);
-            filtered.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <img src="${item.image_url}" onerror="this.src='https://via.placeholder.com/300x300?text=Sattva'">
-                    <div class="title">${item.name}</div>
-                    <div class="price">${item.price} ₴</div>
-                    <button class="buy-btn" onclick="sendOrder('${item.name}', ${item.price})">Купить</button>
-                `;
-                catalog.appendChild(card);
-            });
+            try {
+                const response = await fetch(`${API_URL}/products/`);
+                const allProducts = await response.json();
+                
+                // Фильтруем товары по выбранной категории
+                const filtered = allProducts.filter(p => p.category === categoryName);
+                
+                catalog.innerHTML = '';
+                if (filtered.length === 0) {
+                    catalog.innerHTML = '<p style="text-align: center; width: 100%;">Товаров пока нет.</p>';
+                    return;
+                }
+
+                filtered.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${item.image_url}" onerror="this.src='https://via.placeholder.com/300x300?text=Sattva'">
+                        <div class="title">${item.name}</div>
+                        <div class="price">${item.price} ₴</div>
+                        <button class="buy-btn" onclick="sendOrder('${item.name}', ${item.price})">Купить</button>
+                    `;
+                    catalog.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Ошибка загрузки товаров:", error);
+                catalog.innerHTML = '<p>Ошибка связи с базой.</p>';
+            }
         }
 
+        // 4. Отправка данных в Telegram-бот
         function sendOrder(name, price) {
-            tg.sendData(JSON.stringify({product: name, price: price}));
+            const data = {
+                product: name,
+                price: price
+            };
+            tg.sendData(JSON.stringify(data));
             tg.close();
         }
 
+        // 5. Переключение темы
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             document.getElementById('theme-btn').innerText = isDark ? '☀️' : '🌙';
         }
 
-        // Запуск
-        loadProducts();
+        // Старт приложения
+        loadInitialData();
     </script>
 </body>
 </html>
